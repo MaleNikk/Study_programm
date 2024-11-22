@@ -1,0 +1,11 @@
+spring:
+  kafka:
+
+    applicationURI: "localhost:9092"
+    producerTopic: "order-topic"
+    consumerTopic: "status-topic"
+    applicationSendGroupId: "order-service"
+    applicationStatusGroupId: "order-status"
+
+  serverPortFirst: 8081
+  serverPortSecond: 8082

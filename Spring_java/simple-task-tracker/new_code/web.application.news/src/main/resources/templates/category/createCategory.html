@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Create category</title>
+</head>
+<body>
+<h1>Create Category</h1>
+<form action="/category/createCategory" method="post">
+    <input type="hidden" name="id" th:value="${categoryEntity.id}">
+    <div>
+        <label for="title">Title</label>
+        <input type="text" id="title" name="title" required th:value="${categoryEntity.title}">
+    </div>
+    <button type="submit">Save</button>
+    <a th:href="@{/comeback}">
+        <button type="submit">Return</button>
+    </a>
+</form>
+</body>
+</html>

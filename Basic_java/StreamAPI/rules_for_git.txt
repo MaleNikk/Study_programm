@@ -1,0 +1,48 @@
+All needed for work with GIT.
+_Start work_
+1.	Install GIT.
+2.	Create SSH key.
+3.	Create folder and run in.
+4.	Launch GIT. 
+_Commands for GIT_
+1.	cd “link folder”
+2.	git  init
+3.	git config --global  user.name “user name”
+4.	git config --global  user.email “user email”
+5.	.gitignore – create file in folder GIT and past all ignore files 
+6.	git status
+7.	git add .
+8.	git commit -m “messege”
+9.	git blame
+10.	git revert
+11.	git log
+12.	git show “number commit”
+13.	git clone “link”
+14.	git remote add origin “link”
+15.	git checkout -b “new branch”
+16.	git branch -vv
+17.	git branch -a
+18.	git checkout “name branch”
+19.	git remote set-url origin “link”
+20.	git pull
+21.	git diff
+22.	git diff “name commit”
+23.	git diff “name commit 1” “name commit 2”
+24.	git push -u origin master
+25.	git remote -v
+26.	git stash
+27.	git stash list
+28.	git stash drop “number stash”
+29.	git stash pop
+30.	git merge
+31.	git merge --squash “name branch”
+32.	git merge --abort 
+33.	git reset --merge  
+34.	git restore --staged  “link file”
+35.	git restore “link file”
+36.	git reset --hard 
+37.	git reset --hard “name last commit” 
+38.	git clean -f  
+Warning: 
+1.	Use only Fork for safety work with program code!!! 
+2.	Use only Conventional Commits!!!

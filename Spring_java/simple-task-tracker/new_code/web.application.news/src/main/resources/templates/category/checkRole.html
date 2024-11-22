@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>You haven't right of access?</title>
+</head>
+<body>
+<h1>Please enter your pin!</h1>
+<form action="/category/checkRole" method="post">
+    <div>
+        <label for="name">Name</label>
+        <input type="text" id="name" name="name" required th:value="${readerEntity.name}">
+    </div>
+    <div>
+        <label for="surname">Surname</label>
+        <input type="text" id="surname" name="surname" required th:value="${readerEntity.surname}">
+    </div>
+    <div>
+        <label for="pin">Pin</label>
+        <input type="number" id="pin" name="pin" required th:value="${readerEntity.pin}">
+    </div>
+    <button type="submit">Authorisation</button>
+</form>
+<a th:href="@{/comeback}">
+    <button type="submit">Return</button>
+</a>
+</body>
+</html>

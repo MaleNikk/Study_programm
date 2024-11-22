@@ -1,0 +1,60 @@
+
+File for save debug point in code!
+Debug info: Time: 2024-07-15T19:08:06.574841400Z
+	Generate key for new student.
+Debug info: Time: 2024-07-15T19:13:16.146622300Z
+	Generate key for new student.
+Debug info: Time: 2024-07-15T19:15:12.373707900Z
+	Generate key for new student.
+Debug info: Time: 2024-07-15T19:17:37.154743Z
+	Generate key for new student.
+Debug info: Time: 2024-07-15T19:22:28.293482500Z
+	Generate key for new student.
+Debug info: Time: 2024-07-15T19:23:06.062076Z
+	Generate key for new student.
+Debug info: Time: 2024-07-15T19:23:06.062076Z
+	Check Map for generate key.
+Debug info: Time: 2024-07-15T19:28:07.915268400Z
+	Generate key for new student.
+Debug info: Time: 2024-07-15T19:30:41.274503700Z
+	Generate key for new student.
+Debug info: Time: 2024-07-15T19:33:51.783428600Z
+	Generate key for new student.
+Debug info: Time: 2024-07-15T19:35:39.999883200Z
+	Generate key for new student.
+Debug info: Time: 2024-07-18T22:54:38.008108700Z
+	Generate key for new student.
+Debug info: Time: 2024-07-18T22:54:38.064747800Z
+	Generate key for new student.
+Debug info: Time: 2024-07-18T22:54:38.067296200Z
+	Check Map for generate key.
+Debug info: Time: 2024-07-18T22:54:38.082925400Z
+	Generate key for new student.
+Debug info: Time: 2024-07-18T22:54:38.082925400Z
+	Check Map for generate key.
+Debug info: Time: 2024-07-18T22:54:38.119913500Z
+	Generate key for new student.
+Debug info: Time: 2024-07-18T22:54:38.119913500Z
+	Check Map for generate key.
+Debug info: Time: 2024-07-18T22:54:38.135540100Z
+	Generate key for new student.
+Debug info: Time: 2024-07-18T22:54:38.135540100Z
+	Check Map for generate key.
+Debug info: Time: 2024-07-21T20:54:20.768059900Z
+	Generate key for new student.
+Debug info: Time: 2024-07-21T20:54:20.839062800Z
+	Generate key for new student.
+Debug info: Time: 2024-07-21T20:54:20.848063400Z
+	Check Map for generate key.
+Debug info: Time: 2024-07-21T20:54:20.896059400Z
+	Generate key for new student.
+Debug info: Time: 2024-07-21T20:54:20.903061600Z
+	Check Map for generate key.
+Debug info: Time: 2024-07-21T20:54:20.952061900Z
+	Generate key for new student.
+Debug info: Time: 2024-07-21T20:54:20.962060900Z
+	Check Map for generate key.
+Debug info: Time: 2024-07-21T20:54:21.015063400Z
+	Generate key for new student.
+Debug info: Time: 2024-07-21T20:54:21.028062700Z
+	Check Map for generate key.

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Current news</title>
+</head>
+<body>
+<h1>Only registered readers can leave comments</h1>
+<td>
+    <a th:href="@{/readers/management}">
+        <button type="submit">Management users</button>
+    </a>
+    <a th:href="@{/readers/registration}">
+        <button type="submit">Registration new reader</button>
+    </a>
+    <a th:href="@{/readers/questions}">
+        <button type="submit">Message for administrator</button>
+    </a>
+</td>
+<h1>Categories</h1>
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Title</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="categoryEntity : ${categories}">
+        <td th:text="${categoryEntity.id}"></td>
+        <td th:text="${categoryEntity.title}"></td>
+        <td>
+            <a th:href="@{/showNews/{id}(id=${categoryEntity.id})}">
+                <button type="submit">Show news</button>
+            </a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<a th:href="@{/category/management}">
+    <button type="submit">Management category</button>
+</a>
+<h1>Current news</h1>
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Category</th>
+        <th>Title</th>
+        <th>Text</th>
+        <th>Author</th>
+        <th>Date</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="newsEntity : ${news}">
+        <td th:text="${newsEntity.id}"></td>
+        <td th:text="${newsEntity.category_id}"></td>
+        <td th:text="${newsEntity.title}"></td>
+        <td th:text="${newsEntity.news}"></td>
+        <td th:text="${newsEntity.author}"></td>
+        <td th:text="${newsEntity.date_news}"></td>
+        <td>
+            <a th:href="@{/comments/showCommentsByNews/{id}(id=${newsEntity.id})}">
+                <button type="submit">News comment</button>
+            </a>
+        </td>
+        <td>
+            <a th:href="@{/comments/writeComment/{id}(id=${newsEntity.id})}">
+                <button type="submit">Write comment</button>
+            </a>
+        </td>
+    </tr>
+    </tbody>
+    <a th:href="@{/news/management}">
+        <button type="submit">Management news</button>
+    </a>
+    <a th:href="@{/comments/showAllComments}">
+        <button type="submit">Show all comments</button>
+    </a>
+</table>
+</body>
+</html>

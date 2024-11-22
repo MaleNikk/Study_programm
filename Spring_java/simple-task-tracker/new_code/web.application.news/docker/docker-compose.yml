@@ -1,0 +1,19 @@
+services:
+  postgres:
+    image: postgres:15
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=news
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+  mongodb:
+    image: "mongo:4.4"
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: "test"
+      MONGO_INITDB_ROOT_PASSWORD: "test"
+      MONGO_INITDB_DATABASE: "administration"

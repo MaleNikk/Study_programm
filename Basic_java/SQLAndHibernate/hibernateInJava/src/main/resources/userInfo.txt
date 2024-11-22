@@ -1,0 +1,5 @@
+jdbc:mysql://localhost:3306/mysql
+root
+FhQ!grOuP:7391266
+test
+1

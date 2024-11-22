@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit category</title>
+</head>
+<body>
+<h1>Edit Category</h1>
+<form action="/bookstore/category/edit" method="post">
+    <input type="hidden" name="id" required th:value="${category.id}">
+    <div>
+        <label for="text">Text</label>
+        <input type="text" id="text" name="text" required th:value="${category.text}">
+    </div>
+    <div>
+        <label for="description">Description</label>
+        <input type="text" id="description" name="description" required th:value="${category.description}">
+    </div>
+    <button type="submit">Save</button>
+</form>
+</body>
+</html>

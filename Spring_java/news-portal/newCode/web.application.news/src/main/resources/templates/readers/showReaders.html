@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Readership</title>
+</head>
+<body>
+<h1>Readership</h1>
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Surname</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="readerEntity : ${readers}">
+        <td th:text="${readerEntity.id}"></td>
+        <td th:text="${readerEntity.name}"></td>
+        <td th:text="${readerEntity.surname}"></td>
+        <td>
+            <a th:href="@{/readers/deleteReader/{id}(id=${readerEntity.id})}">
+                <button type="submit">Delete reader</button>
+            </a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<a th:href="@{/readers/registration}">
+    <button type="submit">Registration new reader</button>
+</a>
+<a th:href="@{/readers/comeback}">
+    <button type="submit">Return</button>
+</a>
+</body>
+</html>

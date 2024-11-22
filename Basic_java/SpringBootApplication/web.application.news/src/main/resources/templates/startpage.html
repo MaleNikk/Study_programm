@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Current news</title>
+</head>
+<body>
+<h1>Current news</h1>
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Title</th>
+        <th>Text</th>
+        <th>Author</th>
+        <th>Date</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="newsEntity : ${news}">
+        <td th:text="${newsEntity.id}"></td>
+        <td th:text="${newsEntity.title}"></td>
+        <td th:text="${newsEntity.news}"></td>
+        <td th:text="${newsEntity.author}"></td>
+        <td th:text="${newsEntity.date_news}"></td>
+        <td>
+            <a th:href="@{/news/edit/{id}(id=${newsEntity.id})}">
+                <button type="submit">Edit news</button>
+            </a>
+            <a th:href="@{/news/delete/{id}(id=${newsEntity.id})}">
+                <button type="submit">Delete news</button>
+            </a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<a th:href="@{/news/create}">
+    <button type="submit">Create</button>
+</a>
+</body>
+</html>

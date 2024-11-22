@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Books by Category</title>
+</head>
+<body>
+<h1>Books by Category</h1>
+<table>
+    <thead>
+    <tr>
+        <th>Title</th>
+        <th>Author</th>
+        <th>Date</th>
+        <th>Price</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="book : ${booksByCategory}">
+        <td th:text="${book.strings[1]}"></td>
+        <td th:text="${book.strings[0]}"></td>
+        <td th:text="${book.strings[2]}"></td>
+        <td th:text="${book.integers[1]}"></td>
+    </tr>
+    </tbody>
+</table>
+<a th:href="@{/bookstore/comeback}">
+    <button type="submit">Return</button>
+</a>
+</body>
+</html>

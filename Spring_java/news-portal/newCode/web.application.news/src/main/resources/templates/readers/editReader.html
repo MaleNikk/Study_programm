@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit reader</title>
+</head>
+<body>
+<h1>Edit reader</h1>
+<form action="/readers/editReader" method="post">
+    <input type="hidden" name="id" th:value="${readerEntity.id}">
+    <input type="hidden" name="pin" th:value="${readerEntity.pin}">
+    <input type="hidden" name="name" th:value="${readerEntity.name}">
+    <div>
+        <label for="surname">Surname</label>
+        <input type="text" id="surname" name="surname" required th:value="${readerEntity.surname}">
+    </div>
+        <button type="submit">Save</button>
+    <a th:href="@{/readers/comeback}">
+        <button type="submit">Return</button>
+    </a>
+</form>
+</body>
+</html>

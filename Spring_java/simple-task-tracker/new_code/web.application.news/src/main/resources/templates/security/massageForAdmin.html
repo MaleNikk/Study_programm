@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Massage for admin</title>
+</head>
+<body>
+<h1>Create massage</h1>
+<form action="/massage/administration" method="post">
+    <input type="hidden" name="id" th:value="${massageEntity.id}">
+    <input type="hidden" name="date_resent" th:value="${massageEntity.date_resent}">
+    <div>
+        <label for="author">Author</label>
+        <input type="text" id="author" name="author" required th:value="${massageEntity.author}">
+    </div>
+    <div>
+        <label for="title">Title</label>
+        <input type="text" id="title" name="title" required th:value="${massageEntity.title}">
+    </div>
+    <button type="submit">Save</button>
+</form>
+<a th:href="@{/comeback}">
+    <button type="submit">Return</button>
+</a>
+</body>
+</html>

@@ -1,0 +1,210 @@
+
+File for save information about working code!
+Work info: Time: 2024-07-15T18:40:57.068866200Z
+	Use System out println.
+Work info: Time: 2024-07-15T18:40:57.068866200Z
+	Use System out println.
+Work info: Time: 2024-07-15T18:40:57.068866200Z
+	Use System out println.
+Work info: Time: 2024-07-15T18:40:57.091019800Z
+	Use System out println.
+Work info: Time: 2024-07-15T19:08:06.559188100Z
+	Student added.
+Work info: Time: 2024-07-15T19:08:06.574841400Z
+	Use System out println.
+Work info: Time: 2024-07-15T19:08:06.574841400Z
+	Use System out println.
+Work info: Time: 2024-07-15T19:08:06.574841400Z
+	Use System out println.
+Work info: Time: 2024-07-15T19:13:16.115373100Z
+	Student added.
+Work info: Time: 2024-07-15T19:13:16.115373100Z
+	Use System out println.
+Work info: Time: 2024-07-15T19:13:16.131000400Z
+	Use System out println.
+Work info: Time: 2024-07-15T19:13:16.131000400Z
+	Use System out println.
+Work info: Time: 2024-07-15T19:13:16.162245100Z
+	Use System out println.
+Work info: Time: 2024-07-15T19:15:12.358092400Z
+	Student added.
+Work info: Time: 2024-07-15T19:15:12.358092400Z
+	Use System out println.
+Work info: Time: 2024-07-15T19:15:12.358092400Z
+	Use System out println.
+Work info: Time: 2024-07-15T19:15:12.358092400Z
+	Use System out println.
+Work info: Time: 2024-07-15T19:15:12.373707900Z
+	Use System out println.
+Work info: Time: 2024-07-15T19:17:37.138758300Z
+	Student added.
+Work info: Time: 2024-07-15T19:17:37.138758300Z
+	Use System out println.
+Work info: Time: 2024-07-15T19:17:37.138758300Z
+	Use System out println.
+Work info: Time: 2024-07-15T19:17:37.154743Z
+	Use System out println.
+Work info: Time: 2024-07-15T19:22:28.277860700Z
+	Student added.
+Work info: Time: 2024-07-15T19:22:28.277860700Z
+	Use System out println.
+Work info: Time: 2024-07-15T19:22:28.293482500Z
+	Use System out println.
+Work info: Time: 2024-07-15T19:22:28.293482500Z
+	Use System out println.
+Work info: Time: 2024-07-15T19:23:06.046464500Z
+	Student added.
+Work info: Time: 2024-07-15T19:23:06.046464500Z
+	Use System out println.
+Work info: Time: 2024-07-15T19:23:06.062076Z
+	Use System out println.
+Work info: Time: 2024-07-15T19:23:06.062076Z
+	Use System out println.
+Work info: Time: 2024-07-15T19:23:16.072721800Z
+	Student remove.
+Work info: Time: 2024-07-15T19:23:38.134312300Z
+	Use print list.
+Work info: Time: 2024-07-15T19:23:38.134312300Z
+	Use System out println.
+Work info: Time: 2024-07-15T19:23:38.149903300Z
+	Use System out println.
+Work info: Time: 2024-07-15T19:28:07.899656300Z
+	Student added.
+Work info: Time: 2024-07-15T19:28:07.899656300Z
+	Use System out println.
+Work info: Time: 2024-07-15T19:28:07.899656300Z
+	Use System out println.
+Work info: Time: 2024-07-15T19:28:07.899656300Z
+	Use System out println.
+Work info: Time: 2024-07-15T19:30:41.274503700Z
+	Student added.
+Work info: Time: 2024-07-15T19:30:41.274503700Z
+	Use System out println.
+Work info: Time: 2024-07-15T19:30:41.274503700Z
+	Use System out println.
+Work info: Time: 2024-07-15T19:30:41.274503700Z
+	Use System out println.
+Work info: Time: 2024-07-15T19:33:51.699434900Z
+	Student added.
+Work info: Time: 2024-07-15T19:33:51.767775400Z
+	Use System out println.
+Work info: Time: 2024-07-15T19:33:51.767775400Z
+	Use System out println.
+Work info: Time: 2024-07-15T19:33:51.767775400Z
+	Use System out println.
+Work info: Time: 2024-07-15T19:35:39.999883200Z
+	Student added.
+Work info: Time: 2024-07-15T19:35:39.999883200Z
+	Use System out println.
+Work info: Time: 2024-07-15T19:35:39.999883200Z
+	Use System out println.
+Work info: Time: 2024-07-15T19:35:39.999883200Z
+	Use System out println.
+Work info: Time: 2024-07-15T20:16:40.624577300Z
+	Use print list.
+Work info: Time: 2024-07-18T05:58:35.560777300Z
+	Use print list.
+Work info: Time: 2024-07-18T22:54:37.961291800Z
+	Student added.
+Work info: Time: 2024-07-18T22:54:37.992482500Z
+	Use System out println.
+Work info: Time: 2024-07-18T22:54:37.992482500Z
+	Use System out println.
+Work info: Time: 2024-07-18T22:54:37.992482500Z
+	Use System out println.
+Work info: Time: 2024-07-18T22:54:38.008108700Z
+	Student added.
+Work info: Time: 2024-07-18T22:54:38.039356800Z
+	Use System out println.
+Work info: Time: 2024-07-18T22:54:38.054983600Z
+	Use System out println.
+Work info: Time: 2024-07-18T22:54:38.059749600Z
+	Use System out println.
+Work info: Time: 2024-07-18T22:54:38.067296200Z
+	Student added.
+Work info: Time: 2024-07-18T22:54:38.082925400Z
+	Use System out println.
+Work info: Time: 2024-07-18T22:54:38.082925400Z
+	Use System out println.
+Work info: Time: 2024-07-18T22:54:38.082925400Z
+	Use System out println.
+Work info: Time: 2024-07-18T22:54:38.098549200Z
+	Student added.
+Work info: Time: 2024-07-18T22:54:38.098549200Z
+	Use System out println.
+Work info: Time: 2024-07-18T22:54:38.098549200Z
+	Use System out println.
+Work info: Time: 2024-07-18T22:54:38.098549200Z
+	Use System out println.
+Work info: Time: 2024-07-18T22:54:38.119913500Z
+	Student added.
+Work info: Time: 2024-07-18T22:54:38.135540100Z
+	Use System out println.
+Work info: Time: 2024-07-18T22:54:38.135540100Z
+	Use System out println.
+Work info: Time: 2024-07-18T22:54:38.135540100Z
+	Use System out println.
+Work info: Time: 2024-07-18T22:54:55.087375300Z
+	Use print list.
+Work info: Time: 2024-07-18T22:54:55.103245800Z
+	Use System out println.
+Work info: Time: 2024-07-18T22:54:55.122362600Z
+	Use System out println.
+Work info: Time: 2024-07-18T22:54:55.137996800Z
+	Use System out println.
+Work info: Time: 2024-07-18T22:54:55.137996800Z
+	Use System out println.
+Work info: Time: 2024-07-18T22:54:55.137996800Z
+	Use System out println.
+Work info: Time: 2024-07-18T22:54:55.153620400Z
+	Use System out println.
+Work info: Time: 2024-07-18T22:54:55.153620400Z
+	Use System out println.
+Work info: Time: 2024-07-18T22:54:55.153620400Z
+	Use System out println.
+Work info: Time: 2024-07-18T22:54:55.169245500Z
+	Use System out println.
+Work info: Time: 2024-07-18T22:54:55.169245500Z
+	Use System out println.
+Work info: Time: 2024-07-18T22:55:05.169910400Z
+	Student remove.
+Work info: Time: 2024-07-21T20:54:20.728084400Z
+	Student added.
+Work info: Time: 2024-07-21T20:54:20.734062300Z
+	Use System out println.
+Work info: Time: 2024-07-21T20:54:20.749061700Z
+	Use System out println.
+Work info: Time: 2024-07-21T20:54:20.759059600Z
+	Use System out println.
+Work info: Time: 2024-07-21T20:54:20.773069600Z
+	Student added.
+Work info: Time: 2024-07-21T20:54:20.784062700Z
+	Use System out println.
+Work info: Time: 2024-07-21T20:54:20.805062900Z
+	Use System out println.
+Work info: Time: 2024-07-21T20:54:20.821078200Z
+	Use System out println.
+Work info: Time: 2024-07-21T20:54:20.856060200Z
+	Student added.
+Work info: Time: 2024-07-21T20:54:20.866060100Z
+	Use System out println.
+Work info: Time: 2024-07-21T20:54:20.876061300Z
+	Use System out println.
+Work info: Time: 2024-07-21T20:54:20.886076100Z
+	Use System out println.
+Work info: Time: 2024-07-21T20:54:20.911060500Z
+	Student added.
+Work info: Time: 2024-07-21T20:54:20.921061300Z
+	Use System out println.
+Work info: Time: 2024-07-21T20:54:20.932061Z
+	Use System out println.
+Work info: Time: 2024-07-21T20:54:20.942063Z
+	Use System out println.
+Work info: Time: 2024-07-21T20:54:20.970063400Z
+	Student added.
+Work info: Time: 2024-07-21T20:54:20.982067Z
+	Use System out println.
+Work info: Time: 2024-07-21T20:54:20.992063400Z
+	Use System out println.
+Work info: Time: 2024-07-21T20:54:21.003059400Z
+	Use System out println.

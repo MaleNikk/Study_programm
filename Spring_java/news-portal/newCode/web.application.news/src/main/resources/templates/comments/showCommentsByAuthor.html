@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Comments by Author</title>
+</head>
+<body>
+<h1>Comments by Author</h1>
+<table>
+    <thead>
+    <tr>
+        <th>Author</th>
+        <th>Text</th>
+        <th>Date</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="commentEntity : ${commentsByAuthor}">
+        <td th:text="${commentEntity.author}"></td>
+        <td th:text="${commentEntity.text}"></td>
+        <td th:text="${commentEntity.date_comment}"></td>
+        <td>
+            <a th:href="@{/comments/editCommentAuthor/{id}(id=${commentEntity.id})}">
+                <button type="submit">Edit</button>
+            </a>
+        </td>
+        <td>
+            <a th:href="@{/comments/deleteCommentAuthor/{id}(id=${commentEntity.id})}">
+                <button type="submit">Delete</button>
+            </a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<a th:href="@{/comment/comeback}">
+    <button type="submit">Return</button>
+</a>
+</body>
+</html>

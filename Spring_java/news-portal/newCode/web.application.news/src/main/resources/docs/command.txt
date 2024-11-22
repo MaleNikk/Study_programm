@@ -1,0 +1,67 @@
+Start database postgresql: "docker run -p 5432:5432 --name postgresql -e POSTGRES_PASSWORD=test -e POSTGRES_USER=test -e POSTGRES_DB=test_db -d postgres:15".
+
+
+Start Docker with init.sql script:
+
+---///   name file: docker-compose.yaml   ///---
+
+version: '3'
+
+services:
+  postgres:
+    image: postgres:15
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=news
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+Use Liquibase:
+---///   name file: application.yaml   ///---
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/news
+    username: postgres
+    password: postgres
+    hikari:
+      schema: news_schema
+  liquibase:
+    change-log: classpath:db/changelog-master.xml
+    enabled: true (true - enjoy liquibase)
+    drop-first: true (true - drop base, after - create tables with liquibase,  enjoy this only for create table with liquibase)
+
+---/// name file: changelog-master.xml  ///---
+
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="createTableCategory" author="news_schema">
+        <createTable tableName="categories">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="title" type="varchar(255)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="createTableNews" author="news_schema">
+        <createTable tableName="news">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="category_id" type="bigint"/>
+            <column name="title" type="varchar(550)"/>
+            <column name="news" type="varchar(1500)"/>
+            <column name="author" type="varchar(255)"/>
+            <column name="date_news" type="varchar(255)"/>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>
