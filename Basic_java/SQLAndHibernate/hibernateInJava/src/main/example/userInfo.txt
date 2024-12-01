@@ -1,5 +1,0 @@
-url
-name
-password
-nameDatabase
-0

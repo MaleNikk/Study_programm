@@ -1,8 +1,0 @@
-
-File for save error in code!
-Error info: Time: 2024-07-15T20:16:40.624577300Z
-	Print Map - storage students.
-Error info: Time: 2024-07-18T05:58:35.564776300Z
-	Print Map - storage students.
-Error info: Time: 2024-07-18T22:54:55.103245800Z
-	Print Map - storage students.

@@ -1,5 +1,0 @@
-spring:
-  kafka:
-    bootstrap-servers: "localhost:9092"
-    kafkaMessageTopic: "message-topic"
-    kafkaMessageGroupId: "kafka-message-group-id"
