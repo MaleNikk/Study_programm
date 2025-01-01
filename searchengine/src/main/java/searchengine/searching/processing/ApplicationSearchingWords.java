@@ -26,7 +26,7 @@ public class ApplicationSearchingWords implements AppSearching {
     @Autowired
     private AppRepository repository;
 
-    private Boolean start = false;
+    private volatile Boolean start = false;
 
     private Double relevance;
 
