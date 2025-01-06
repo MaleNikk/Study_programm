@@ -1,0 +1,18 @@
+# example values
+
+indexing-settings:
+  sites:
+    - url: https://www.lenta.ru
+      name: Лента.ру
+    - url: https://www.skillbox.ru
+      name: Skillbox
+    - url: https://www.playback.ru
+      name: PlayBack.Ru
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/storage
+    username: word
+    password: word
+    hikari:
+      schema: storage
