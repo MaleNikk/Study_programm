@@ -2,12 +2,12 @@ package searchengine.dto.statistics;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
-@NoArgsConstructor
-@AllArgsConstructor
 @Data
-public class StatisticsResponse {
+@AllArgsConstructor
+public final class StatisticsResponse {
     private boolean result;
     private StatisticsData statistics;
+
+    private StatisticsResponse(){}
 }

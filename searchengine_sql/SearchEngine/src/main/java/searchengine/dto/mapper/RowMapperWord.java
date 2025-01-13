@@ -10,11 +10,11 @@ public class RowMapperWord implements RowMapper<ModelWord> {
     @Override
     public ModelWord mapRow(ResultSet rs, int rowNum) throws SQLException {
         return new ModelWord(
-                rs.getString(ModelWord.Fields.lemma),
-                rs.getString(ModelWord.Fields.word),
-                rs.getString(ModelWord.Fields.url),
-                rs.getString(ModelWord.Fields.name),
-                rs.getString(ModelWord.Fields.parentUrl)
+                rs.getString("lemma"),
+                rs.getString("word"),
+                rs.getString("url"),
+                rs.getString("name"),
+                rs.getString("parent_url")
         );
     }
 }

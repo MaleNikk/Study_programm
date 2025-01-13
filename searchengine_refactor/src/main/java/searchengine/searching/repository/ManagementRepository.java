@@ -1,12 +1,13 @@
 package searchengine.searching.repository;
 
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.stereotype.Component;
 import searchengine.dto.entity.*;
 import searchengine.searching.processing.FixedValue;
 import searchengine.searching.storage.*;
+
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -14,33 +15,25 @@ import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
 import static org.springframework.data.mongodb.core.query.Update.update;
 
-@Data
+@Component
 @Slf4j
-public class ManagementRepository implements AppManagementRepositoryImpl {
+public final class ManagementRepository implements AppManagementRepositoryImpl {
 
-    @Autowired
-    private NavigableRepository navigableRepository;
+    private final NavigableRepository navigableRepository;
 
-    @Autowired
-    private BadSitesRepository badSitesRepository;
+    private final BadSitesRepository badSitesRepository;
 
-    @Autowired
-    private SystemSiteRepository systemSiteRepository;
+    private final SystemSiteRepository systemSiteRepository;
 
-    @Autowired
-    private WordsRepository wordsRepository;
+    private final WordsRepository wordsRepository;
 
-    @Autowired
-    private RepositoryAllSite repositoryAllSite;
+    private final RepositoryAllSite repositoryAllSite;
 
-    @Autowired
-    private FoundSitesRepository foundSitesRepository;
+    private final FoundSitesRepository foundSitesRepository;
 
-    @Autowired
-    private ParentSiteRepository parentSiteRepository;
+    private final ParentSiteRepository parentSiteRepository;
 
-    @Autowired
-    private MongoOperations mongoOperations;
+    private final MongoOperations mongoOperations;
 
     private final ConcurrentHashMap<Integer, SystemSiteEntity> collectionSystemSites = new ConcurrentHashMap<>();
 
@@ -48,17 +41,37 @@ public class ManagementRepository implements AppManagementRepositoryImpl {
 
     private final ConcurrentHashMap<String, WordEntity> collectionWords = new ConcurrentHashMap<>();
 
+    @Autowired
+    public ManagementRepository(
+            NavigableRepository navigableRepository,
+            BadSitesRepository badSitesRepository,
+            SystemSiteRepository systemSiteRepository,
+            WordsRepository wordsRepository,
+            RepositoryAllSite repositoryAllSite,
+            FoundSitesRepository foundSitesRepository,
+            ParentSiteRepository parentSiteRepository,
+            MongoOperations mongoOperations) {
+        this.navigableRepository = navigableRepository;
+        this.badSitesRepository = badSitesRepository;
+        this.systemSiteRepository = systemSiteRepository;
+        this.wordsRepository = wordsRepository;
+        this.repositoryAllSite = repositoryAllSite;
+        this.foundSitesRepository = foundSitesRepository;
+        this.parentSiteRepository = parentSiteRepository;
+        this.mongoOperations = mongoOperations;
+    }
+
     @Override
     public void saveSystemSite(SystemSiteEntity systemSiteEntity) {
         if (checkSystemSitesCollectionSize()) {
-            getCollectionSystemSites().put(systemSiteEntity.getId(), systemSiteEntity);
+            collectionSystemSites.put(systemSiteEntity.getId(), systemSiteEntity);
         }
     }
 
     @Override
     public void saveBadSite(BadSiteEntity badSiteEntity) {
         if (checkBabSitesCollectionSize()) {
-            getCollectionBadSites().put(badSiteEntity.getId(), badSiteEntity);
+            collectionBadSites.put(badSiteEntity.getId(), badSiteEntity);
         }
     }
 
@@ -67,51 +80,50 @@ public class ManagementRepository implements AppManagementRepositoryImpl {
         Integer key = modelSite.parentUrl().hashCode();
         if (checkWordCollectionSize()) {
             saveNavigation(word);
-            if (getWordsRepository().findById(word).isPresent()) {
-                ModelWord saved = getWordsRepository().findById(word).get().getModelWord();
+            if (wordsRepository.findById(word).isPresent()) {
+                ModelWord saved = wordsRepository.findById(word).get().getModelWord();
                 updateWordEntity(word, modelSite, saved);
-            } else if (getCollectionWords().containsKey(word)) {
-                if (getCollectionWords().get(word).getModelWord().sites().containsKey(key)) {
-                    getCollectionWords().get(word).getModelWord().sites().get(key).add(modelSite.url());
+            } else if (collectionWords.containsKey(word)) {
+                if (collectionWords.get(word).getModelWord().sites().containsKey(key)) {
+                    collectionWords.get(word).getModelWord().sites().get(key).add(modelSite.url());
                 } else {
-                    getCollectionWords().get(word).getModelWord().sites().put(key, new HashSet<>(Set.of(modelSite.url())));
+                    collectionWords.get(word).getModelWord().sites().put(key, new HashSet<>(Set.of(modelSite.url())));
                 }
             } else {
-                getCollectionWords().put(word, FixedValue.getNewWordEntity(word,key,modelSite));
+                collectionWords.put(word, FixedValue.getNewWordEntity(word, key, modelSite));
             }
         }
     }
 
     @Override
     public synchronized void saveFoundSites(List<FoundSiteEntity> foundSites) {
-        List<FoundSiteEntity> forSave = new ArrayList<>();
-        foundSites.forEach(foundSite -> {
-            if (checkAllRepository(foundSite.getId())){
-                forSave.add(foundSite);
-            }});
-        getFoundSitesRepository().saveAll(forSave);
+        List<FoundSiteEntity> forSave = foundSites.stream()
+                .filter(site -> checkAllRepository(site.getId())).toList();
+        if (!forSave.isEmpty()) {
+            foundSitesRepository.saveAll(forSave);
+        }
     }
 
     @Override
     public void saveParentSites(List<ParentSiteEntity> parentSites) {
         parentSites.forEach(parentSite -> {
-            if (!getParentSiteRepository().existsById(parentSite.getId())) {
-                getParentSiteRepository().save(parentSite);
+            if (!parentSiteRepository.existsById(parentSite.getId())) {
+                parentSiteRepository.save(parentSite);
             }
         });
     }
 
     @Override
     public void saveStatistics(String parentUrl, Integer lemmas, Integer pages, String status) {
-        if (getParentSiteRepository().existsById(parentUrl.hashCode())) {
+        if (parentSiteRepository.existsById(parentUrl.hashCode())) {
             updateStatistics(parentUrl, lemmas, pages, status);
         }
     }
 
     @Override
     public String getName(String parentUrl) {
-        if (getParentSiteRepository().findById(parentUrl.hashCode()).isPresent()) {
-            return getParentSiteRepository().findById(parentUrl.hashCode()).get().getModelParentSite().getName();
+        if (parentSiteRepository.findById(parentUrl.hashCode()).isPresent()) {
+            return parentSiteRepository.findById(parentUrl.hashCode()).get().getModelParentSite().getName();
         } else {
             return FixedValue.SEARCH_IN_ALL;
         }
@@ -120,28 +132,23 @@ public class ManagementRepository implements AppManagementRepositoryImpl {
     @Override
     public synchronized ModelSite getFoundSite() {
         ModelSite modelSite = null;
-        if (getFoundSitesRepository().findAll().stream().findAny().isPresent()) {
-            modelSite = getFoundSitesRepository().findAll().stream().findAny().get().getModelSite();
+        if (foundSitesRepository.findAll().stream().findAny().isPresent()) {
+            modelSite = foundSitesRepository.findAll().stream().findAny().get().getModelSite();
         }
         if (modelSite != null) {
-            getRepositoryAllSite().save(new AllSitesEntity(modelSite.url().hashCode(), modelSite));
-            getFoundSitesRepository().deleteById(modelSite.url().hashCode());
+            repositoryAllSite.save(new AllSitesEntity(modelSite.url().hashCode(), modelSite));
+            foundSitesRepository.deleteById(modelSite.url().hashCode());
         }
         return modelSite;
     }
 
     @Override
     public synchronized Integer countFoundSites() {
-        if (getFoundSitesRepository().findAll().isEmpty()) {
+        if (foundSitesRepository.findAll().isEmpty()) {
             return FixedValue.ZERO;
         } else {
-            return getFoundSitesRepository().findAll().size();
+            return foundSitesRepository.findAll().size();
         }
-    }
-
-    @Override
-    public Integer countIndexedSites() {
-        return getRepositoryAllSite().findAll().size();
     }
 
     public List<ModelWord> findModelWords(String word, String parentUrl) {
@@ -149,10 +156,10 @@ public class ManagementRepository implements AppManagementRepositoryImpl {
         Integer searchKey = parentUrl.hashCode();
         log.info("Init get collection words from repository.");
         List<ModelWord> modelWords = new ArrayList<>();
-        if (getNavigableRepository().findById(id).isPresent()) {
-            getNavigableRepository().findById(id).get().getWords().forEach(key -> {
-                if (getWordsRepository().findById(key).isPresent()) {
-                    ModelWord modelWord = getWordsRepository().findById(key).get().getModelWord();
+        if (navigableRepository.findById(id).isPresent()) {
+            navigableRepository.findById(id).get().getWords().forEach(key -> {
+                if (wordsRepository.findById(key).isPresent()) {
+                    ModelWord modelWord = wordsRepository.findById(key).get().getModelWord();
                     if (Objects.equals(parentUrl, FixedValue.SEARCH_IN_ALL)) {
                         modelWords.add(modelWord);
                     } else {
@@ -168,76 +175,84 @@ public class ManagementRepository implements AppManagementRepositoryImpl {
 
     @Override
     public List<ModelWord> showIndexedWords() {
-        return getWordsRepository().findAll().subList(0,250).stream().map(WordEntity::getModelWord).toList();
+        return wordsRepository.findAll().subList(0, 250).stream().map(WordEntity::getModelWord).toList();
     }
 
     @Override
     public List<ModelSite> showIndexedSites() {
-        return getRepositoryAllSite().findAll().subList(0,50).stream().map(AllSitesEntity::getModelSite).toList();
+        return repositoryAllSite.findAll().subList(0, 50).stream().map(AllSitesEntity::getModelSite).toList();
     }
 
     @Override
     public List<ParentSiteEntity> getParentSites() {
-        return getParentSiteRepository().findAll();
+        return parentSiteRepository.findAll();
     }
 
     @Override
-    public void delete(){
-        getRepositoryAllSite().deleteAll();
-        getFoundSitesRepository().deleteAll();
+    public void delete(String url) {
+        if (Objects.equals(url, FixedValue.SEARCH_IN_ALL)) {
+            repositoryAllSite.deleteAll();
+            foundSitesRepository.deleteAll();
+        } else {
+            repositoryAllSite.deleteById(url.hashCode());
+            badSitesRepository.deleteById(url.hashCode());
+            foundSitesRepository.deleteById(url.hashCode());
+        }
     }
 
     private void saveWordsEntity() {
-        getWordsRepository().saveAll(getCollectionWords().values());
-        getCollectionWords().clear();
+        wordsRepository.saveAll(collectionWords.values());
+        collectionWords.clear();
     }
 
     private void saveSystemSites() {
-        getSystemSiteRepository().saveAll(getCollectionSystemSites().values());
-        getCollectionSystemSites().clear();
+        systemSiteRepository.saveAll(collectionSystemSites.values());
+        collectionSystemSites.clear();
     }
 
     private void saveBadSites() {
-        getBadSitesRepository().saveAll(getCollectionBadSites().values());
-        getCollectionBadSites().clear();
+        badSitesRepository.saveAll(collectionBadSites.values());
+        collectionBadSites.clear();
     }
 
     private synchronized boolean checkSystemSitesCollectionSize() {
-        if (getCollectionSystemSites().size() > FixedValue.COUNT_SITES) {
+        if (collectionSystemSites.size() > FixedValue.COUNT_SITES) {
             saveSystemSites();
         }
         return FixedValue.TRUE;
     }
 
     private synchronized boolean checkBabSitesCollectionSize() {
-        if (getCollectionBadSites().size() > FixedValue.COUNT_SITES) {
+        if (collectionBadSites.size() > FixedValue.COUNT_SITES) {
             saveBadSites();
         }
         return FixedValue.TRUE;
     }
 
     private synchronized boolean checkWordCollectionSize() {
-        if (getCollectionWords().size() > FixedValue.COUNT_SITES) {
+        if (collectionWords.size() > FixedValue.COUNT_SITES) {
             saveWordsEntity();
         }
         return FixedValue.TRUE;
     }
-    private synchronized boolean checkParentSite(Integer id){
-        return getParentSiteRepository().findById(id).isPresent();
+
+    private synchronized boolean checkParentSite(Integer id) {
+        return parentSiteRepository.findById(id).isPresent();
     }
-    private boolean checkAllRepository(Integer id){
-        if (getRepositoryAllSite().findAll().isEmpty()){
+
+    private boolean checkAllRepository(Integer id) {
+        if (repositoryAllSite.findAll().isEmpty() && foundSitesRepository.findAll().isEmpty()) {
             return FixedValue.TRUE;
         }
-        return !getRepositoryAllSite().existsById(id);
+        return !repositoryAllSite.existsById(id) && !foundSitesRepository.existsById(id);
     }
 
     private void updateNavigableEntity(String word) {
         String id = getId(word);
-        if (getNavigableRepository().findById(id).isPresent()) {
-            HashSet<String> updated = getNavigableRepository().findById(id).get().getWords();
+        if (navigableRepository.findById(id).isPresent()) {
+            HashSet<String> updated = navigableRepository.findById(id).get().getWords();
             updated.add(word);
-            getMongoOperations().updateFirst(query(where("id").is(id)),
+            mongoOperations.updateFirst(query(where("id").is(id)),
                     update("words", updated), NavigableEntity.class);
         }
     }
@@ -249,26 +264,26 @@ public class ManagementRepository implements AppManagementRepositoryImpl {
         } else {
             saved.sites().put(key, new HashSet<>(Set.of(modelSite.url())));
         }
-        getMongoOperations().updateFirst(query(where("id").is(word)), update("modelWord", saved), WordEntity.class);
+        mongoOperations.updateFirst(query(where("id").is(word)), update("modelWord", saved), WordEntity.class);
     }
 
     private void updateStatistics(String url, Integer lemmas, Integer pages, String status) {
         Integer id = url.hashCode();
         if (checkParentSite(id)) {
-            ModelParentSite saved = getParentSiteRepository().findById(id).get().getModelParentSite();
-                    saved.setStatus(status);
-                    saved.setStatusTime(System.nanoTime());
-                    saved.setPages(saved.getPages() + pages);
-                    saved.setLemmas(saved.getLemmas() + lemmas);
-            getMongoOperations().updateFirst(query(where("id").is(id)),
+            ModelParentSite saved = parentSiteRepository.findById(id).get().getModelParentSite();
+            saved.setStatus(status);
+            saved.setStatusTime(System.nanoTime());
+            saved.setPages(saved.getPages() + pages);
+            saved.setLemmas(saved.getLemmas() + lemmas);
+            mongoOperations.updateFirst(query(where("id").is(id)),
                     update("modelParentSite", saved), ParentSiteEntity.class);
         }
     }
 
     private void saveNavigation(String word) {
         String id = getId(word);
-        if (!getNavigableRepository().existsById(id)) {
-            getNavigableRepository().save(new NavigableEntity(id, new HashSet<>(Set.of(word))));
+        if (!navigableRepository.existsById(id)) {
+            navigableRepository.save(new NavigableEntity(id, new HashSet<>(Set.of(word))));
         } else {
             updateNavigableEntity(word);
         }

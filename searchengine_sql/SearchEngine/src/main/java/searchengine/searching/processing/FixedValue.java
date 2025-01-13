@@ -1,12 +1,10 @@
 package searchengine.searching.processing;
 
-import lombok.Data;
 import searchengine.dto.entity.*;
 import searchengine.dto.model.TotalSearchResult;
 
 import java.time.LocalDateTime;
 
-@Data
 public final class FixedValue {
 
     public static final String
@@ -15,7 +13,6 @@ public final class FixedValue {
             INDEXED_STOP = "STOP MANUALLY",
             INDEXING_COMPLETE = "INDEXED",
             INDEXING_NOT_STARTED = "INDEXING NOT STARTED",
-            REGEX_ABC = "[^a-zA-Zа-яА-ЯёЁ]",
             REGEX_NO_ABC = "[a-zA-Zа-яА-ЯёЁ]",
             CHECK_LINK_HTTP = "http://",
             CHECK_LINK_HTTPS = "https://",
@@ -33,11 +30,10 @@ public final class FixedValue {
             COUNT_THREADS = 9,
             ZERO = 0,
             TIME_SLEEP = 5000,
-            COUNT_WORDS = 500,
             COUNT_SITES = 50;
 
     public static ModelParentSite getNewModelParentSite(String url, String name) {
-        return new ModelParentSite(url, name, LocalDateTime.now().toString(), "", System.nanoTime(),
+        return new ModelParentSite(url, name, LocalDateTime.now().toString(), INDEXING_NOT_STARTED, System.nanoTime(),
                 FixedValue.ERROR, 0, 0);
     }
 

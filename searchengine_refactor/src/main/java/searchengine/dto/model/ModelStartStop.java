@@ -1,23 +1,22 @@
 package searchengine.dto.model;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import searchengine.searching.processing.FixedValue;
 
-@NoArgsConstructor
 @Data
 public class ModelStartStop {
 
-    private Boolean result;
+    private final Boolean result;
 
-    private String error;
+    private final String error;
 
     public ModelStartStop(Boolean result, String error) {
         this.result = result;
         this.error = error;
     }
 
-    public static ModelStartStop startIndexing() { return new ModelStartStop(FixedValue.TRUE,"Indexing started!");
+    public static ModelStartStop startIndexing() {
+        return new ModelStartStop(FixedValue.TRUE,"Indexing started!");
     }
 
     public static ModelStartStop wasStarted() {

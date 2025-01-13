@@ -10,9 +10,9 @@ public class RowMapperModelSite implements RowMapper<ModelSite> {
     @Override
     public ModelSite mapRow(ResultSet rs, int rowNum) throws SQLException {
         return new ModelSite(
-                rs.getString(ModelSite.Fields.url),
-                rs.getString(ModelSite.Fields.parentUrl),
-                rs.getString(ModelSite.Fields.name)
+                rs.getString("url"),
+                rs.getString("parent_url"),
+                rs.getString("name")
         );
     }
 }

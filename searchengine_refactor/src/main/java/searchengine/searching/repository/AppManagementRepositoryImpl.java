@@ -18,15 +18,13 @@ public interface AppManagementRepositoryImpl {
 
     void saveStatistics(String parentUrl, Integer lemmas, Integer sites, String status);
 
-    void delete();
+    void delete(String url);
 
     String getName(String parentUrl);
 
     ModelSite getFoundSite();
 
     Integer countFoundSites();
-
-    Integer countIndexedSites();
 
     List<ModelWord> findModelWords(String word,String parentUrl);
 

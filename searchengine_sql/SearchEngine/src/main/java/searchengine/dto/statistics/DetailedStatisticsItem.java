@@ -2,10 +2,12 @@ package searchengine.dto.statistics;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import searchengine.dto.entity.ModelParentSite;
+import searchengine.searching.processing.ProjectManagement;
 
-@AllArgsConstructor
 @Data
-public class DetailedStatisticsItem {
+@AllArgsConstructor
+public final class DetailedStatisticsItem {
     private String url;
     private String name;
     private String status;
@@ -13,4 +15,17 @@ public class DetailedStatisticsItem {
     private String error;
     private int pages;
     private int lemmas;
+
+    private DetailedStatisticsItem(){}
+
+    public static DetailedStatisticsItem from(ModelParentSite modelParentSite){
+        return new DetailedStatisticsItem(
+                modelParentSite.url(),
+                modelParentSite.name(),
+                ProjectManagement.STATUS,
+                modelParentSite.statusTime(),
+                modelParentSite.error(),
+                modelParentSite.pages(),
+                modelParentSite.lemmas());
+    }
 }

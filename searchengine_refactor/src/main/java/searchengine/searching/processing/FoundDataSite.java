@@ -1,12 +1,8 @@
 package searchengine.searching.processing;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.springframework.beans.factory.annotation.Autowired;
-import searchengine.searching.storage.BadSitesRepository;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -14,14 +10,11 @@ import java.util.HashSet;
 import java.util.regex.Pattern;
 
 @Slf4j
-@Data
-@NoArgsConstructor
-public class FoundDataSite {
+public final class FoundDataSite {
 
-    @Autowired
-    private BadSitesRepository badSitesRepository;
+    private FoundDataSite(){}
 
-    public HashSet<String> getSiteWords(Document document) {
+    public static HashSet<String> getSiteWords(Document document) {
         HashSet<String> words = new HashSet<>();
         Arrays.stream(document.getAllElements().text().split("\\s+"))
                 .map(String::trim)
@@ -32,7 +25,7 @@ public class FoundDataSite {
         return words;
     }
 
-    public HashSet<String> getSiteLinks(Document document) {
+    public static HashSet<String> getSiteLinks(Document document) {
         HashSet<String> sites = new HashSet<>();
         document.getAllElements()
                 .stream()
@@ -53,7 +46,7 @@ public class FoundDataSite {
         return document;
     }
 
-    public boolean checkUrl(String url) {
+    public static boolean checkUrl(String url) {
         String checkedType = url.substring(url.length() - 6, url.length() - 1);
         return (url.contains("{") ||
                 url.contains("}")) ||

@@ -9,8 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 
 @Slf4j
-public record DataIndexingEngine(AppManagementRepositoryImpl managementRepository,
-                                 FoundDataSite foundDataSite) implements Runnable {
+public record DataIndexingEngine(AppManagementRepositoryImpl managementRepository) implements Runnable {
 
     @Override
     public void run() {
@@ -29,13 +28,13 @@ public record DataIndexingEngine(AppManagementRepositoryImpl managementRepositor
 
         if (modelSite != null) {
             String url = modelSite.url();
-            if (foundDataSite().checkUrl(url)) {
+            if (FoundDataSite.checkUrl(url)) {
                 saveSystemSite(modelSite);
             } else {
                 Document document = FoundDataSite.getDocument(url);
                 if (document != null) {
-                    HashSet<String> links = foundDataSite().getSiteLinks(document);
-                    HashSet<String> words = foundDataSite().getSiteWords(document);
+                    HashSet<String> links = FoundDataSite.getSiteLinks(document);
+                    HashSet<String> words = FoundDataSite.getSiteWords(document);
                     String text = document.getAllElements().text();
                     if (text.isBlank() || text.length() < 5) {
                         saveSystemSite(modelSite);

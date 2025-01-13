@@ -1,6 +1,5 @@
 package searchengine.controllers;
 
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,25 +17,27 @@ import searchengine.searching.service.AppServiceImpl;
 import java.util.List;
 
 @Slf4j
-@Data
 @RestController
 @RequestMapping("/api")
-public class ApiController {
+public final class ApiController {
 
-    @Autowired
-    private AppServiceImpl service;
+    private final AppServiceImpl service;
+
+    public ApiController(@Autowired AppServiceImpl service) {
+        this.service = service;
+    }
 
     @GetMapping("/statistics")
     public ResponseEntity<StatisticsResponse> statistics() {
         log.info("Init statistics at system time: {}", System.currentTimeMillis());
-        return ResponseEntity.ok(getService().getStatistics());
+        return ResponseEntity.ok(service.getStatistics());
     }
 
     @GetMapping("/startIndexing")
     public ResponseEntity<ModelStartStop> startIndexing() {
         log.info("Init start indexing at system time: {}", System.currentTimeMillis());
         if (!ProjectManagement.START_INDEXING.get()) {
-            getService().startIndexing();
+            service.startIndexing();
             return ResponseEntity.ok(ModelStartStop.startIndexing());
         } else {
             return ResponseEntity.ok(ModelStartStop.wasStarted());
@@ -47,7 +48,7 @@ public class ApiController {
     public ResponseEntity<ModelStartStop> stopIndexing() {
         log.info("Init stop indexing at system time: {}", System.currentTimeMillis());
         if (ProjectManagement.START_INDEXING.get() && ProjectManagement.STATUS.equals(FixedValue.IN_PROGRESS)) {
-            getService().stopIndexing();
+            service.stopIndexing();
             return ResponseEntity.ok(ModelStartStop.stopIndexing());
         } else {
             return ResponseEntity.ok(ModelStartStop.notStarted());
@@ -61,7 +62,7 @@ public class ApiController {
         if (!query.isBlank()) {
             if (site == null) { site = FixedValue.SEARCH_IN_ALL; }
             ModelSearch modelSearch = new ModelSearch(query, site, offset, limit);
-            return ResponseEntity.ok(getService().findByWord(modelSearch));
+            return ResponseEntity.ok(service.findByWord(modelSearch));
         } else {
             return ResponseEntity.badRequest().body(FixedValue.getBadResponse());
         }
@@ -71,7 +72,7 @@ public class ApiController {
     public ResponseEntity<TotalSearchResult> indexing(@RequestParam String url) {
         log.info("Init add site for indexing at system time: {}", System.currentTimeMillis());
         if (!url.isBlank()) {
-            getService().addSite(url, "");
+            service.addSite(url, "");
             log.info("Site added, url: {}", url);
             return ResponseEntity.ok(FixedValue.getOkResponse());
         } else {
@@ -82,12 +83,12 @@ public class ApiController {
     @GetMapping("/words")
     public ResponseEntity<List<ModelWord>> showAllWords() {
         log.info("Init show all words at system time: {}", System.currentTimeMillis());
-        return ResponseEntity.ok(getService().showAllWords());
+        return ResponseEntity.ok(service.showAllWords());
     }
 
     @GetMapping("/sites")
     public ResponseEntity<List<ModelSite>> showAllSites() {
         log.info("Init show all sites at system time: {}", System.currentTimeMillis());
-        return ResponseEntity.ok(getService().showAllSites());
+        return ResponseEntity.ok(service.showAllSites());
     }
 }

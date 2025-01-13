@@ -1,10 +1,7 @@
 package searchengine.searching.processing;
 
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.event.ApplicationStartedEvent;
-import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import searchengine.config.SitesList;
 import searchengine.dto.entity.*;
@@ -20,39 +17,44 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
-@Data
 @Slf4j
-public class ProjectManagement implements AppManagementImpl {
+public final class ProjectManagement implements AppManagementImpl {
 
-    @Autowired
-    private AppManagementRepositoryImpl managementRepository;
+    private final AppManagementRepositoryImpl managementRepository;
 
-    @Autowired
-    private SitesList sitesList;
+    private final SitesList sitesList;
 
-    private final StatisticBuilder statisticBuilder = new StatisticBuilder();
+    private final TotalSearchResult totalSearchResult;
 
-    private final FoundDataSite foundDataSite = new FoundDataSite();
+    private final TreeMap<Integer, LinkedHashSet<SearchResultAnswer>> results;
 
-    private TotalSearchResult totalSearchResult = new TotalSearchResult();
-
-    private final TreeMap<Integer,LinkedHashSet<SearchResultAnswer>> results = new TreeMap<>();
-
-    private final List<Boolean> resultLoadData = new ArrayList<>();
-
-    public static final AtomicBoolean START_INDEXING = new AtomicBoolean(FixedValue.FALSE);
+    private final List<Boolean> resultLoadData;
 
     public static volatile String STATUS = FixedValue.INDEXING_NOT_STARTED;
 
-    private String lastSearchWord = "";
+    private String lastSearchWord;
 
-    private final AtomicInteger countThreadSearch = new AtomicInteger();
+    private final AtomicInteger countThreadSearch;
+
+    public static final AtomicBoolean START_INDEXING = new AtomicBoolean(FixedValue.FALSE);
+
+    @Autowired
+    public ProjectManagement(AppManagementRepositoryImpl managementRepository, SitesList sitesList) {
+        this.managementRepository = managementRepository;
+        this.sitesList = sitesList;
+        this.results = new TreeMap<>();
+        this.resultLoadData = new ArrayList<>();
+        this.totalSearchResult = new TotalSearchResult();
+        this.countThreadSearch = new AtomicInteger();
+        this.lastSearchWord = "";
+    }
 
     @Override
     public void startIndexing() {
         log.info("Init method startIndexing. {}", this.getClass().getName());
         START_INDEXING.set(FixedValue.TRUE);
         STATUS = FixedValue.IN_PROGRESS;
+        initParentSites();
         initIndexing();
     }
 
@@ -67,38 +69,44 @@ public class ProjectManagement implements AppManagementImpl {
     public void addSite(String url, String name) {
         log.info("Init method addSite. {}", this.getClass().getName());
         name = url.contains("www.") ?
-                url.split("/")[2].replace("www.","") :
+                url.split("/")[2].replace("www.", "") :
                 url.split("/")[2];
         log.info("Name new site: {}", name);
-        getManagementRepository().delete(url);
-        getManagementRepository().saveParentSites(List.of(FixedValue.getNewModelParentSite(url, name)));
-        getManagementRepository().saveFoundSites(List.of(FixedValue.getNewModelSite(url, url, name)));
+        managementRepository.delete(url);
+        managementRepository.saveParentSites(List.of(FixedValue.getNewModelParentSite(url, name)));
+        managementRepository.saveFoundSites(List.of(FixedValue.getNewModelSite(url, url, name)));
     }
 
     @Override
     public List<ModelSite> showAllSites() {
         log.info("Init method showAllSites. {}", this.getClass().getName());
-        return getManagementRepository().showIndexedSites();
+        return managementRepository.showIndexedSites();
     }
 
     @Override
     public List<ModelWord> showAllWords() {
         log.info("Init method showAllWords. {}", this.getClass().getName());
-        return getManagementRepository().showIndexedWords();
+        return managementRepository.showIndexedWords();
     }
 
     @Override
     public TotalSearchResult findByWord(ModelSearch modelSearch) {
         log.info("Init method searching word: {}. {}", modelSearch.getWord(), this.getClass().getName());
-        List<ModelWord> words = getManagementRepository().findModelWords(modelSearch.getWord());
-        if (words.size() < FixedValue.COUNT_THREADS)
-        { getCountThreadSearch().set(words.size()); }
-        else { getCountThreadSearch().set(FixedValue.COUNT_THREADS); }
-        if (!Objects.equals(getLastSearchWord(), modelSearch.getWord())) {
-            setLastSearchWord(modelSearch.getWord());
-            if (!getResults().isEmpty()) { getResults().clear(); }
-            for (int i = 0; i < 12; i++) { getResults().put(i, new LinkedHashSet<>()); }
-            initMultithreadingSearch(modelSearch,words);
+        List<ModelWord> words = managementRepository.findModelWords(modelSearch.getWord());
+        if (words.size() < FixedValue.COUNT_THREADS) {
+            countThreadSearch.set(words.size());
+        } else {
+            countThreadSearch.set(FixedValue.COUNT_THREADS);
+        }
+        if (!Objects.equals(lastSearchWord, modelSearch.getWord())) {
+            lastSearchWord = modelSearch.getWord();
+            if (!results.isEmpty()) {
+                results.clear();
+            }
+            for (int i = 0; i < 12; i++) {
+                results.put(i, new LinkedHashSet<>());
+            }
+            initMultithreadingSearch(modelSearch, words);
             long timeStart = System.nanoTime();
             do {
                 log.info("Searching in progress, timeout: {} sec.",
@@ -109,32 +117,32 @@ public class ProjectManagement implements AppManagementImpl {
                     log.info("Current search was interrupted! Please read log file!");
                     throw new RuntimeException(e);
                 }
-            } while (!Objects.equals(getResultLoadData().size(), getCountThreadSearch().get()));
-            getTotalSearchResult().setResult(FixedValue.TRUE);
-            getTotalSearchResult().setError(FixedValue.ERROR);
-            getTotalSearchResult().setData(new ArrayList<>());
-            getResults().values().forEach(sites -> getTotalSearchResult().getData()
+            } while (!Objects.equals(resultLoadData.size(), countThreadSearch.get()));
+            totalSearchResult.setResult(FixedValue.TRUE);
+            totalSearchResult.setError(FixedValue.ERROR);
+            totalSearchResult.setData(new ArrayList<>());
+            results.values().forEach(sites -> totalSearchResult.getData()
                     .addAll(sites));
-            getTotalSearchResult().setCount(getTotalSearchResult().getData().size());
-            getTotalSearchResult().setData(getTotalSearchResult().getData().subList(FixedValue.ZERO,
-                    getTotalSearchResult().getData().size() > modelSearch.getLimit() ? modelSearch.getLimit() :
-                            getTotalSearchResult().getData().size()));
+            totalSearchResult.setCount(totalSearchResult.getData().size());
+            totalSearchResult.setData(totalSearchResult.getData().subList(FixedValue.ZERO,
+                    totalSearchResult.getData().size() > modelSearch.getLimit() ? modelSearch.getLimit() :
+                            totalSearchResult.getData().size()));
         }
-        return getTotalSearchResult();
+        return totalSearchResult;
     }
 
     @Override
     public StatisticsResponse getStatistics() {
         log.info("Init method getStatistics. {}", this.getClass().getName());
-        return getStatisticBuilder().getStatistics(getManagementRepository().getParentSites());
+        return StatisticBuilder.getStatistics(managementRepository.getParentSites());
     }
 
     private void initIndexing() {
-        if (getManagementRepository().countFoundSites() < FixedValue.COUNT_THREADS) {
-            if (Objects.equals(getManagementRepository().countFoundSites(), FixedValue.ZERO)) {
+        if (managementRepository.countFoundSites() < FixedValue.COUNT_THREADS) {
+            if (Objects.equals(managementRepository.countFoundSites(), FixedValue.ZERO)) {
                 initStartedListSites();
             }
-            DataIndexingEngine indexingEngine = new DataIndexingEngine(getManagementRepository(), getFoundDataSite());
+            DataIndexingEngine indexingEngine = new DataIndexingEngine(managementRepository);
             indexingEngine.loadData();
             initIndexing();
         } else {
@@ -150,7 +158,7 @@ public class ProjectManagement implements AppManagementImpl {
                     modelSearch,
                     words,
                     indexThread.getAndIncrement()));
-        } while (searchingThreads.size() < getCountThreadSearch().get());
+        } while (searchingThreads.size() < countThreadSearch.get());
         searchingThreads.forEach(Thread::start);
     }
 
@@ -174,13 +182,13 @@ public class ProjectManagement implements AppManagementImpl {
     }
 
     private Thread getNewThreadIndexing() {
-        return new Thread(new DataIndexingEngine(getManagementRepository(), getFoundDataSite()));
+        return new Thread(new DataIndexingEngine(managementRepository));
     }
 
     private Thread getNewThreadSearching(ModelSearch modelSearch, List<ModelWord> words, Integer indexTread) {
         return new Thread(new DataSearchEngine(
-                getResults(),
-                getResultLoadData(),
+                results,
+                resultLoadData,
                 words,
                 modelSearch,
                 indexTread));
@@ -188,22 +196,24 @@ public class ProjectManagement implements AppManagementImpl {
 
     private void initStartedListSites() {
         List<ModelSite> foundSiteEntities = new ArrayList<>();
-        getManagementRepository().getParentSites().forEach(parent ->
-                foundSiteEntities.add(FixedValue.getNewModelSite(parent.getUrl(), parent.getUrl(), parent.getName())));
-        foundSiteEntities.forEach(site -> getManagementRepository().delete(site.parentUrl()));
-        getManagementRepository().saveFoundSites(foundSiteEntities);
+        managementRepository.getParentSites().forEach(parent ->
+                foundSiteEntities.add(FixedValue.getNewModelSite(parent.url(), parent.url(), parent.name())));
+        foundSiteEntities.forEach(site -> managementRepository.delete(site.parentUrl()));
+        managementRepository.saveFoundSites(foundSiteEntities);
     }
 
-    @EventListener(ApplicationStartedEvent.class)
-    private void initStatistics() {
-        log.info("Init statistics.");
-        if (!getSitesList().getSites().isEmpty()) {
+    private void initParentSites() {
+        if (!sitesList.getSites().isEmpty()) {
             List<ModelParentSite> parentSiteEntities = new ArrayList<>();
-            getSitesList().getSites().forEach(site -> {
+            List<ModelSite> foundSiteEntities = new ArrayList<>();
+            sitesList.getSites().forEach(site -> {
                 ModelParentSite parentSite = FixedValue.getNewModelParentSite(site.getUrl(), site.getName());
+                ModelSite modelSite = FixedValue.getNewModelSite(site.getUrl(),site.getUrl(),site.getName());
                 parentSiteEntities.add(parentSite);
+                foundSiteEntities.add(modelSite);
             });
-            getManagementRepository().saveParentSites(parentSiteEntities);
+            managementRepository.saveParentSites(parentSiteEntities);
+            managementRepository.saveFoundSites(foundSiteEntities);
         }
     }
 }

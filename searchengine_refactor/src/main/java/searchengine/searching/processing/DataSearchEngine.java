@@ -12,7 +12,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Slf4j
 public record DataSearchEngine(TreeMap<Integer, LinkedHashSet<SearchResultAnswer>> results,
                                List<Boolean> resultLoadData,
-                               List<ModelWord> words, ModelSearch modelSearch, Integer indexSearch,
+                               List<ModelWord> words,
+                               ModelSearch modelSearch, Integer indexSearch,
                                String name) implements Runnable {
 
     @Override
@@ -72,7 +73,6 @@ public record DataSearchEngine(TreeMap<Integer, LinkedHashSet<SearchResultAnswer
         if (charsSearch.length <= 5) {
             indexStart = 2;
             relevance = charsSaved.length > charsSearch.length ? 0.2 : 0.3;
-
         } else {
             indexStart = 4;
             relevance = charsSaved.length > charsSearch.length ? 0.4 : 0.5;

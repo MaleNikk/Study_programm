@@ -10,13 +10,13 @@ public class RowMapperParentSite implements RowMapper<ModelParentSite> {
     @Override
     public ModelParentSite mapRow(ResultSet rs, int rowNum) throws SQLException {
         return new ModelParentSite(
-                rs.getString(ModelParentSite.Fields.url),
-                rs.getString(ModelParentSite.Fields.name),
-                rs.getString(ModelParentSite.Fields.createdTime),
-                rs.getString(ModelParentSite.Fields.status),
-                rs.getLong(ModelParentSite.Fields.statusTime),
-                rs.getString(ModelParentSite.Fields.error),
-                rs.getInt(ModelParentSite.Fields.lemmas),
-                rs.getInt(ModelParentSite.Fields.pages));
+                rs.getString("url"),
+                rs.getString("name"),
+                rs.getString("created_time"),
+                rs.getString("status"),
+                rs.getLong("status_time"),
+                rs.getString("error"),
+                rs.getInt("pages"),
+                rs.getInt("lemmas"));
     }
 }

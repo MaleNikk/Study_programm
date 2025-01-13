@@ -1,6 +1,5 @@
 package searchengine.searching.processing;
 
-import lombok.Data;
 import searchengine.dto.entity.*;
 import searchengine.dto.model.TotalSearchResult;
 
@@ -10,7 +9,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-@Data
 public final class FixedValue {
 
     public static final String
