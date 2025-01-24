@@ -10,7 +10,7 @@ public interface AppManagementRepositoryImpl {
 
     void saveBadSite(ModelSite modelSite);
 
-    void saveWord(String word,ModelSite modelSite);
+    void saveWord(List<ModelWord> modelWords);
 
     void saveFoundSites(List<ModelSite> foundSites);
 

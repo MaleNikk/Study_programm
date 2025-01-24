@@ -39,9 +39,9 @@ public final class ApiController {
         log.info("Init start indexing at system time: {}", System.currentTimeMillis());
         if (!ProjectManagement.START_INDEXING.get()) {
             service.startIndexing();
-            return ResponseEntity.ok(ModelStartStop.startIndexing());
+            return ResponseEntity.ok(FixedValue.startIndexing());
         } else {
-            return ResponseEntity.ok(ModelStartStop.wasStarted());
+            return ResponseEntity.ok(FixedValue.wasStarted());
         }
     }
 
@@ -50,9 +50,9 @@ public final class ApiController {
         log.info("Init stop indexing at system time: {}", System.currentTimeMillis());
         if (ProjectManagement.START_INDEXING.get() && ProjectManagement.STATUS.equals(FixedValue.IN_PROGRESS)) {
             service.stopIndexing();
-            return ResponseEntity.ok(ModelStartStop.stopIndexing());
+            return ResponseEntity.ok(FixedValue.stopIndexing());
         } else {
-            return ResponseEntity.ok(ModelStartStop.notStarted());
+            return ResponseEntity.ok(FixedValue.notStarted());
         }
     }
 

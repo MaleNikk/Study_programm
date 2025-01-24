@@ -34,8 +34,6 @@ public final class ProjectManagement implements AppManagementImpl {
 
     private String lastSearchWord;
 
-    private final AtomicInteger countThreadSearch;
-
     public static final AtomicBoolean START_INDEXING = new AtomicBoolean(FixedValue.FALSE);
 
     @Autowired
@@ -45,7 +43,6 @@ public final class ProjectManagement implements AppManagementImpl {
         this.results = new TreeMap<>();
         this.resultLoadData = new ArrayList<>();
         this.totalSearchResult = new TotalSearchResult();
-        this.countThreadSearch = new AtomicInteger();
         this.lastSearchWord = "";
     }
 
@@ -93,10 +90,9 @@ public final class ProjectManagement implements AppManagementImpl {
     public TotalSearchResult findByWord(ModelSearch modelSearch) {
         log.info("Init method searching word: {}. {}", modelSearch.getWord(), this.getClass().getName());
         List<ModelWord> words = managementRepository.findModelWords(modelSearch.getWord());
+        int countThreads = FixedValue.COUNT_THREADS;
         if (words.size() < FixedValue.COUNT_THREADS) {
-            countThreadSearch.set(words.size());
-        } else {
-            countThreadSearch.set(FixedValue.COUNT_THREADS);
+            countThreads = words.size();
         }
         if (!Objects.equals(lastSearchWord, modelSearch.getWord())) {
             lastSearchWord = modelSearch.getWord();
@@ -106,7 +102,7 @@ public final class ProjectManagement implements AppManagementImpl {
             for (int i = 0; i < 12; i++) {
                 results.put(i, new LinkedHashSet<>());
             }
-            initMultithreadingSearch(modelSearch, words);
+            initMultithreadingSearch(modelSearch, words, countThreads);
             long timeStart = System.nanoTime();
             do {
                 log.info("Searching in progress, timeout: {} sec.",
@@ -117,7 +113,7 @@ public final class ProjectManagement implements AppManagementImpl {
                     log.info("Current search was interrupted! Please read log file!");
                     throw new RuntimeException(e);
                 }
-            } while (!Objects.equals(resultLoadData.size(), countThreadSearch.get()));
+            } while (!Objects.equals(resultLoadData.size(), countThreads));
             totalSearchResult.setResult(FixedValue.TRUE);
             totalSearchResult.setError(FixedValue.ERROR);
             totalSearchResult.setData(new ArrayList<>());
@@ -143,14 +139,14 @@ public final class ProjectManagement implements AppManagementImpl {
                 initStartedListSites();
             }
             DataIndexingEngine indexingEngine = new DataIndexingEngine(managementRepository);
-            indexingEngine.loadData();
+            indexingEngine.loadData(new FoundDataSite());
             initIndexing();
         } else {
             initMultithreadingIndexing();
         }
     }
 
-    private void initMultithreadingSearch(ModelSearch modelSearch, List<ModelWord> words) {
+    private void initMultithreadingSearch(ModelSearch modelSearch, List<ModelWord> words, int countThreads) {
         AtomicInteger indexThread = new AtomicInteger(FixedValue.ZERO);
         List<Thread> searchingThreads = new ArrayList<>();
         do {
@@ -158,7 +154,7 @@ public final class ProjectManagement implements AppManagementImpl {
                     modelSearch,
                     words,
                     indexThread.getAndIncrement()));
-        } while (searchingThreads.size() < countThreadSearch.get());
+        } while (searchingThreads.size() < countThreads);
         searchingThreads.forEach(Thread::start);
     }
 

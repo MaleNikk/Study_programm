@@ -32,6 +32,8 @@ public final class ManagementRepository implements AppManagementRepositoryImpl {
 
     private final RowMapperWord mapperWord;
 
+    private final ProjectMorphology morphology = new ProjectMorphology();
+
     @Autowired
     public ManagementRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -43,25 +45,27 @@ public final class ManagementRepository implements AppManagementRepositoryImpl {
     @Override
     public synchronized void saveSystemSite(ModelSite modelSite) {
         String sql = "INSERT INTO sys_urls (parent_url, name,url) VALUES(?, ?, ?)";
-        jdbcTemplate.update(sql,modelSite.parentUrl(), modelSite.name(),modelSite.url());
+        jdbcTemplate.update(sql, modelSite.parentUrl(), modelSite.name(), modelSite.url());
     }
 
     @Override
     public synchronized void saveBadSite(ModelSite modelSite) {
         String sql = "INSERT INTO bad_urls (parent_url, name,url) VALUES(?, ?, ?)";
-        jdbcTemplate.update(sql,modelSite.parentUrl(), modelSite.name(),modelSite.url());
+        jdbcTemplate.update(sql, modelSite.parentUrl(), modelSite.name(), modelSite.url());
     }
 
     @Override
-    public synchronized void saveWord(String word, ModelSite modelSite) {
-        String sql = "INSERT INTO words (lemma, word, url, name, parent_url) VALUES(?, ?, ?, ?, ?)";
-        jdbcTemplate.update(sql,
-                ProjectMorphology.getForm(word),
-                word,
-                modelSite.url(),
-                modelSite.name(),
-                modelSite.parentUrl()
-               );
+    public synchronized void saveWord(List<ModelWord> modelWords) {
+        for (ModelWord modelWord : modelWords) {
+            String sql = "INSERT INTO words (lemma, word, url, name, parent_url) VALUES(?, ?, ?, ?, ?)";
+            jdbcTemplate.update(sql,
+                    modelWord.lemma(),
+                    modelWord.word(),
+                    modelWord.url(),
+                    modelWord.name(),
+                    modelWord.parentUrl()
+            );
+        }
     }
 
     @Override
@@ -120,7 +124,7 @@ public final class ManagementRepository implements AppManagementRepositoryImpl {
 
     @Override
     public synchronized void saveStatistics(String parentUrl, Integer lemmas, Integer pages, String status) {
-        ModelParentSite parentSite = getParentSite(parentUrl);
+        ModelParentSite parentSite = findParentSiteByUrl(parentUrl);
         if (parentSite != null) {
             String sql = "UPDATE parent_sites SET status = ?, status_time = ?, pages = ?, lemmas = ? WHERE url = ?";
             jdbcTemplate.update(sql, status, System.currentTimeMillis(), (pages + parentSite.pages()),
@@ -131,7 +135,7 @@ public final class ManagementRepository implements AppManagementRepositoryImpl {
     @Override
     public synchronized ModelSite getFoundSite() {
         String query = "SELECT * FROM find_urls ";
-        List<ModelSite> sites = jdbcTemplate.query(query,mapperModelSite);
+        List<ModelSite> sites = jdbcTemplate.query(query, mapperModelSite);
         ModelSite result = null;
         if (!sites.isEmpty()) {
             result = sites.get(FixedValue.ZERO);
@@ -154,23 +158,24 @@ public final class ManagementRepository implements AppManagementRepositoryImpl {
     }
 
     public List<ModelWord> findModelWords(String word) {
-        String query = "SELECT * FROM words WHERE lemma = '".concat(
-                ProjectMorphology.getForm(word)).concat("'");
-        return jdbcTemplate.query(query,mapperWord);
+        String query = "EMPTY";
+        if (!word.isBlank()) {
+            query = "SELECT * FROM words WHERE lemma = '".concat(
+                    morphology.getForm(word)).concat("'");
+        }
+        return query.equals("EMPTY") ? List.of() : jdbcTemplate.query(query, mapperWord);
     }
 
     @Override
     public List<ModelWord> showIndexedWords() {
         String query = "SELECT * FROM words ";
-        List<ModelWord> words = new ArrayList<>(List.of());
-        words.addAll(jdbcTemplate.query(query,mapperWord));
-        return words.subList(FixedValue.ZERO,FixedValue.COUNT_SITES);
+        return jdbcTemplate.query(query, mapperWord).stream().limit(50).toList();
     }
 
     @Override
     public List<ModelSite> showIndexedSites() {
         String query = "SELECT * FROM all_urls ";
-        return jdbcTemplate.query(query,mapperModelSite);
+        return jdbcTemplate.query(query, mapperModelSite);
     }
 
     @Override
@@ -180,7 +185,7 @@ public final class ManagementRepository implements AppManagementRepositoryImpl {
     }
 
     @Override
-    public void delete(String parentUrl){
+    public void delete(String parentUrl) {
         String[] queries = {
                 "DELETE FROM all_urls WHERE parent_url = ? ",
                 "DELETE FROM find_urls WHERE parent_url = ?",
@@ -189,12 +194,12 @@ public final class ManagementRepository implements AppManagementRepositoryImpl {
                 "DELETE FROM words WHERE parent_url = ?",
                 "DELETE FROM parent_sites WHERE url = ?"
         };
-        for (String query : queries){
-            jdbcTemplate.update(query,parentUrl);
+        for (String query : queries) {
+            jdbcTemplate.update(query, parentUrl);
         }
     }
 
-    private boolean checkSavedParentSite(ModelParentSite modelParentSite){
+    private boolean checkSavedParentSite(ModelParentSite modelParentSite) {
         String query = "SELECT * FROM parent_sites WHERE url = ?";
         ModelParentSite parentSite = DataAccessUtils.singleResult(
                 jdbcTemplate.query(query,
@@ -203,7 +208,7 @@ public final class ManagementRepository implements AppManagementRepositoryImpl {
         return Objects.equals(parentSite, null);
     }
 
-    private boolean checkSavedAllSite(ModelSite modelSite){
+    private boolean checkSavedAllSite(ModelSite modelSite) {
         String query = "SELECT * FROM all_urls WHERE url = ?";
         ModelSite result = DataAccessUtils.singleResult(
                 jdbcTemplate.query(query,
@@ -212,7 +217,7 @@ public final class ManagementRepository implements AppManagementRepositoryImpl {
         return Objects.equals(result, null);
     }
 
-    private boolean checkSavedFoundSite(ModelSite modelSite){
+    private boolean checkSavedFoundSite(ModelSite modelSite) {
         String query = "SELECT * FROM find_urls WHERE url = ?";
         ModelSite result = DataAccessUtils.singleResult(
                 jdbcTemplate.query(query,
@@ -221,7 +226,7 @@ public final class ManagementRepository implements AppManagementRepositoryImpl {
         return Objects.equals(result, null);
     }
 
-    private ModelParentSite getParentSite(String parentUrl){
+    private ModelParentSite findParentSiteByUrl(String parentUrl) {
         String query = "SELECT * FROM parent_sites WHERE url = ?";
         return DataAccessUtils.singleResult(
                 jdbcTemplate.query(query,

@@ -5,36 +5,51 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.regex.Pattern;
+import java.net.URL;
+import java.util.*;
 
 @Slf4j
 public final class FoundDataSite {
 
-    public static HashSet<String> getSiteWords(Document document) {
+    public HashSet<String> getSiteWords(Document document) {
         HashSet<String> words = new HashSet<>();
-        Arrays.stream(document.getAllElements().text().split("\\s+"))
-                .map(String::trim)
-                .map(String::toLowerCase)
-                .filter(word -> word.length() >= 3 && word.length() <= 17)
-                .filter(word -> Pattern.compile(FixedValue.REGEX_NO_ABC).matcher(word).find())
-                .forEach(words::add);
+        Scanner scanner = new Scanner(document
+                .getAllElements().text().toLowerCase().replaceAll(FixedValue.REGEX_ABC," "));
+        while (scanner.hasNext()){
+            String word =  scanner.next().strip();
+            if (word.length() > 2 && word.length() < 19 && !word.isBlank()) {
+                words.add(word);
+            }
+        }
+        scanner.close();
         return words;
     }
 
-    public static HashSet<String> getSiteLinks(Document document) {
-        HashSet<String> sites = new HashSet<>();
-        document.getAllElements()
-                .stream()
-                .filter(element ->
-                        element.attr(FixedValue.CHECK_LINK_HTML).contains(FixedValue.CHECK_LINK_HTTP) ||
-                                element.attr(FixedValue.CHECK_LINK_HTML).contains(FixedValue.CHECK_LINK_HTTPS))
-                .forEach(element -> sites.add(element.attr(FixedValue.CHECK_LINK_HTML)));
-        return sites;
+    public HashMap<Integer, HashSet<String>> getSiteLinks(String url) {
+        int keyValid = 1;
+        int keyInvalid = 0;
+        HashMap<Integer, HashSet<String>> links = new HashMap<>(Map.of(
+                keyValid, new HashSet<>(),
+                keyInvalid, new HashSet<>()));
+        try {
+            Scanner scanner = new Scanner(new URL(url).openStream());
+            while (scanner.hasNext()) {
+                String data = scanner.next();
+                if (data.contains(FixedValue.CHECK_LINK_HTTP)|| data.contains(FixedValue.CHECK_LINK_HTTPS)) {
+                    String path = data.split("\"")[1];
+                    if (path.length() > 4 && path.substring(0,4).contains("http")) {
+                        links.get(keyValid).add(path);
+                    }
+                }
+            }
+            scanner.close();
+        } catch (IOException exception) {
+            links.get(keyInvalid).add(url);
+        }
+        return links;
     }
 
-    public static Document getDocument(String url) {
+    public Document getDocument(String url) {
         Document document;
         try {
             document = Jsoup.connect(url).get();
@@ -44,7 +59,7 @@ public final class FoundDataSite {
         return document;
     }
 
-    public static boolean checkUrl(String url) {
+    public boolean checkUrl(String url) {
         String checkedType = url.substring(url.length() - 6, url.length() - 1);
         return (url.contains("{") ||
                 url.contains("}")) ||

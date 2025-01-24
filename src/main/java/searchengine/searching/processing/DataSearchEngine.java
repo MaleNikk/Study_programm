@@ -1,5 +1,6 @@
 package searchengine.searching.processing;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.nodes.Document;
 import searchengine.dto.entity.ModelWord;
@@ -9,12 +10,19 @@ import searchengine.dto.model.SearchResultAnswer;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
+@AllArgsConstructor
 @Slf4j
-public record DataSearchEngine(TreeMap<Integer, LinkedHashSet<SearchResultAnswer>> results,
-                               List<Boolean> resultLoadData,
-                               List<ModelWord> words,
-                               ModelSearch modelSearch,
-                               Integer indexSearch) implements Runnable {
+public class DataSearchEngine implements Runnable {
+
+    private final TreeMap<Integer, LinkedHashSet<SearchResultAnswer>> results;
+
+    private final List<Boolean> resultLoadData;
+
+    private final List<ModelWord> words;
+
+    private final ModelSearch modelSearch;
+
+    private final Integer indexSearch;
 
     @Override
     public void run() {
@@ -24,14 +32,14 @@ public record DataSearchEngine(TreeMap<Integer, LinkedHashSet<SearchResultAnswer
 
     public void findByWord() {
         AtomicInteger indexThread = new AtomicInteger(FixedValue.ZERO);
-        if (!words().isEmpty()) {
-            for (ModelWord modelWord : words()) {
-                if (Objects.equals(indexThread.get(), indexSearch()) && modelWord != null) {
-                    if (Objects.equals(modelSearch().getParentSite(), FixedValue.SEARCH_IN_ALL)) {
-                        buildDataResult(modelSearch().getWord(), modelWord);
+        if (!words.isEmpty()) {
+            for (ModelWord modelWord : words) {
+                if (Objects.equals(indexThread.get(), indexSearch) && modelWord != null) {
+                    if (Objects.equals(modelSearch.getParentSite(), FixedValue.SEARCH_IN_ALL)) {
+                        buildDataResult(modelSearch.getWord(), modelWord);
                     } else {
-                        if (modelWord.parentUrl().equalsIgnoreCase(modelSearch().getParentSite())) {
-                            buildDataResult(modelSearch().getWord(), modelWord);
+                        if (modelWord.parentUrl().equalsIgnoreCase(modelSearch.getParentSite())) {
+                            buildDataResult(modelSearch.getWord(), modelWord);
                         }
                     }
                 }
@@ -41,16 +49,17 @@ public record DataSearchEngine(TreeMap<Integer, LinkedHashSet<SearchResultAnswer
                 indexThread.getAndIncrement();
             }
         }
-        resultLoadData().add(FixedValue.TRUE);
-        log.info("Searching complete!");
+        resultLoadData.add(FixedValue.TRUE);
+        log.info("{} for searching interrupt!", Thread.currentThread().getName());
         Thread.currentThread().interrupt();
     }
 
     private void buildDataResult(String searchingWord, ModelWord modelWord) {
-        Document document = FoundDataSite.getDocument(modelWord.url());
+        FoundDataSite foundDataSite = new FoundDataSite();
+        Document document = foundDataSite.getDocument(modelWord.url());
         if (document != null) {
             String text = document.getAllElements().text();
-            String page = getPageUri(modelWord.url(), modelSearch().getParentSite());
+            String page = getPageUri(modelWord.url(), modelSearch.getParentSite());
             String parentSite = page.equalsIgnoreCase("/") ?
                     modelWord.url() : page.isBlank() ?
                     modelWord.url().substring(FixedValue.ZERO,modelWord.url().length()-1) :
@@ -60,7 +69,7 @@ public record DataSearchEngine(TreeMap<Integer, LinkedHashSet<SearchResultAnswer
             Double relevance = getRelevance(searchingWord, modelWord.word());
             Integer keyMap = relevance <= 1.0 ? (10 - (int) (relevance * 10)) : 11;
             if (!snippet.isBlank()) {
-                results().get(keyMap).add(
+                results.get(keyMap).add(
                         new SearchResultAnswer(parentSite,modelWord.name(),page,document.title(),snippet,relevance));
             }
         }
