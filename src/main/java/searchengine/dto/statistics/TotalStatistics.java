@@ -3,8 +3,8 @@ package searchengine.dto.statistics;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import searchengine.dto.entity.ModelParentSite;
-import searchengine.searching.processing.FixedValue;
-import searchengine.searching.processing.ProjectManagement;
+import searchengine.searching.processing.constant.FixedValue;
+import searchengine.searching.processing.indexing.IndexingThreadsManager;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -24,7 +24,7 @@ public final class TotalStatistics {
         AtomicInteger sites = new AtomicInteger(parentSites.size());
         AtomicInteger pages = new AtomicInteger(FixedValue.ZERO);
         AtomicInteger lemmas = new AtomicInteger(FixedValue.ZERO);
-        AtomicBoolean indexing = new AtomicBoolean(ProjectManagement.START_INDEXING.get());
+        AtomicBoolean indexing = new AtomicBoolean(IndexingThreadsManager.START.get());
         parentSites.forEach(site -> {
             pages.set(pages.get() + site.pages());
             lemmas.set(lemmas.get() + site.lemmas());

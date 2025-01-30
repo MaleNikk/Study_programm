@@ -2,6 +2,8 @@ package searchengine.searching.service;
 
 import searchengine.dto.entity.ModelSite;
 import searchengine.dto.entity.ModelWord;
+import searchengine.dto.model.ModelStart;
+import searchengine.dto.model.ModelStop;
 import searchengine.dto.model.TotalSearchResult;
 import searchengine.dto.model.ModelSearch;
 import searchengine.dto.statistics.StatisticsResponse;
@@ -9,9 +11,9 @@ import searchengine.dto.statistics.StatisticsResponse;
 import java.util.List;
 
 public interface AppServiceImpl {
-    void startIndexing();
+    ModelStart startIndexing();
 
-    void stopIndexing();
+    ModelStop stopIndexing();
 
     void addSite(String url, String name);
 

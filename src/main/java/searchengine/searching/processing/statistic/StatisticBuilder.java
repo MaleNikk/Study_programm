@@ -1,4 +1,4 @@
-package searchengine.searching.processing;
+package searchengine.searching.processing.statistic;
 
 import lombok.extern.slf4j.Slf4j;
 import searchengine.dto.entity.ModelParentSite;
@@ -6,6 +6,7 @@ import searchengine.dto.statistics.DetailedStatisticsItem;
 import searchengine.dto.statistics.StatisticsData;
 import searchengine.dto.statistics.StatisticsResponse;
 import searchengine.dto.statistics.TotalStatistics;
+import searchengine.searching.processing.constant.FixedValue;
 
 import java.util.List;
 

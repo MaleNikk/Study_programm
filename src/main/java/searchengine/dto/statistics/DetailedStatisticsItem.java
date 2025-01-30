@@ -3,7 +3,7 @@ package searchengine.dto.statistics;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import searchengine.dto.entity.ModelParentSite;
-import searchengine.searching.processing.ProjectManagement;
+import searchengine.searching.processing.indexing.IndexingThreadsManager;
 
 @Data
 @AllArgsConstructor
@@ -22,7 +22,7 @@ public final class DetailedStatisticsItem {
         return new DetailedStatisticsItem(
                 modelParentSite.url(),
                 modelParentSite.name(),
-                ProjectManagement.STATUS,
+                IndexingThreadsManager.STATUS,
                 modelParentSite.statusTime(),
                 modelParentSite.error(),
                 modelParentSite.pages(),

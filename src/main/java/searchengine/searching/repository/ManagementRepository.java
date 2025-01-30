@@ -13,8 +13,8 @@ import searchengine.dto.entity.*;
 import searchengine.dto.mapper.RowMapperModelSite;
 import searchengine.dto.mapper.RowMapperParentSite;
 import searchengine.dto.mapper.RowMapperWord;
-import searchengine.searching.processing.FixedValue;
-import searchengine.searching.processing.ProjectMorphology;
+import searchengine.searching.processing.constant.FixedValue;
+import searchengine.searching.processing.morhpology.ProjectMorphology;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -160,8 +160,8 @@ public final class ManagementRepository implements AppManagementRepositoryImpl {
     public List<ModelWord> findModelWords(String word) {
         String query = "EMPTY";
         if (!word.isBlank()) {
-            query = "SELECT * FROM words WHERE lemma = '".concat(
-                    morphology.getForm(word)).concat("'");
+            String lemma = morphology.getForm(word);
+            query = "SELECT * FROM words WHERE lemma = '".concat(lemma).concat("'");
         }
         return query.equals("EMPTY") ? List.of() : jdbcTemplate.query(query, mapperWord);
     }

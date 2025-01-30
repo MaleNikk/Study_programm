@@ -1,9 +1,7 @@
-package searchengine.searching.processing;
+package searchengine.searching.processing.constant;
 
 import searchengine.dto.entity.*;
-import searchengine.dto.model.ModelStartStop;
 import searchengine.dto.model.TotalSearchResult;
-
 import java.time.LocalDateTime;
 
 public final class FixedValue {
@@ -34,7 +32,7 @@ public final class FixedValue {
 
     public static ModelParentSite getNewModelParentSite(String url, String name) {
         return new ModelParentSite(url, name, LocalDateTime.now().toString(), INDEXING_NOT_STARTED, System.nanoTime(),
-                FixedValue.ERROR, 0, 0);
+                ERROR, 0, 0);
     }
 
     public static ModelSite getNewModelSite(String url, String parentUrl, String name){
@@ -42,30 +40,14 @@ public final class FixedValue {
     }
 
     public static TotalSearchResult getBadResponse(){
-        return new TotalSearchResult(FixedValue.FALSE, FixedValue.ERROR_SEARCH);
+        return new TotalSearchResult(FALSE, ERROR_SEARCH);
     }
 
     public static TotalSearchResult getOkResponse(){
-        return new TotalSearchResult(FixedValue.TRUE, FixedValue.RESPONSE_OK);
+        return new TotalSearchResult(TRUE, RESPONSE_OK);
     }
 
     public static TotalSearchResult getBadResponseAddSite() {
-        return new TotalSearchResult(FixedValue.FALSE, FixedValue.ERROR_CONNECTION);
-    }
-
-    public static ModelStartStop startIndexing() {
-        return new ModelStartStop(FixedValue.TRUE, "Indexing started!");
-    }
-
-    public static ModelStartStop wasStarted() {
-        return new ModelStartStop(FixedValue.TRUE, "Indexing in progress!");
-    }
-
-    public static ModelStartStop stopIndexing() {
-        return new ModelStartStop(FixedValue.TRUE, "Indexing stopped!");
-    }
-
-    public static ModelStartStop notStarted() {
-        return new ModelStartStop(FixedValue.FALSE, "Indexing not started!");
+        return new TotalSearchResult(FALSE, ERROR_CONNECTION);
     }
 }

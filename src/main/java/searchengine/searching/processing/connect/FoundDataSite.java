@@ -1,8 +1,9 @@
-package searchengine.searching.processing;
+package searchengine.searching.processing.connect;
 
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import searchengine.searching.processing.constant.FixedValue;
 
 import java.io.IOException;
 import java.net.URL;
@@ -59,15 +60,4 @@ public final class FoundDataSite {
         return document;
     }
 
-    public boolean checkUrl(String url) {
-        String checkedType = url.substring(url.length() - 6, url.length() - 1);
-        return (url.contains("{") ||
-                url.contains("}")) ||
-                url.contains("=") ||
-                url.contains("?") ||
-                checkedType.contains(".css") ||
-                checkedType.contains(".csv") ||
-                checkedType.contains(".js") ||
-                checkedType.contains(".png");
-    }
 }

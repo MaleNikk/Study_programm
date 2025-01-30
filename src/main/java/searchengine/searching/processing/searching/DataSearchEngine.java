@@ -1,4 +1,4 @@
-package searchengine.searching.processing;
+package searchengine.searching.processing.searching;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -6,23 +6,24 @@ import org.jsoup.nodes.Document;
 import searchengine.dto.entity.ModelWord;
 import searchengine.dto.model.ModelSearch;
 import searchengine.dto.model.SearchResultAnswer;
+import searchengine.searching.processing.constant.FixedValue;
+import searchengine.searching.processing.connect.FoundDataSite;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @AllArgsConstructor
 @Slf4j
 public class DataSearchEngine implements Runnable {
 
-    private final TreeMap<Integer, LinkedHashSet<SearchResultAnswer>> results;
+    private final TreeMap<Integer, ConcurrentLinkedQueue<SearchResultAnswer>> results;
 
-    private final List<Boolean> resultLoadData;
+    private final AtomicInteger resultWork;
 
-    private final List<ModelWord> words;
+    private final ConcurrentLinkedQueue<ModelWord> words;
 
     private final ModelSearch modelSearch;
-
-    private final Integer indexSearch;
 
     @Override
     public void run() {
@@ -31,25 +32,19 @@ public class DataSearchEngine implements Runnable {
     }
 
     public void findByWord() {
-        AtomicInteger indexThread = new AtomicInteger(FixedValue.ZERO);
         if (!words.isEmpty()) {
-            for (ModelWord modelWord : words) {
-                if (Objects.equals(indexThread.get(), indexSearch) && modelWord != null) {
-                    if (Objects.equals(modelSearch.getParentSite(), FixedValue.SEARCH_IN_ALL)) {
+            do {
+                ModelWord modelWord = words.poll();
+                if (Objects.equals(modelSearch.getParentSite(), FixedValue.SEARCH_IN_ALL)) {
+                    buildDataResult(modelSearch.getWord(), modelWord);
+                } else {
+                    if (modelWord.parentUrl().equalsIgnoreCase(modelSearch.getParentSite())) {
                         buildDataResult(modelSearch.getWord(), modelWord);
-                    } else {
-                        if (modelWord.parentUrl().equalsIgnoreCase(modelSearch.getParentSite())) {
-                            buildDataResult(modelSearch.getWord(), modelWord);
-                        }
                     }
                 }
-                if (Objects.equals(indexThread.get(), FixedValue.COUNT_THREADS)) {
-                    indexThread.set(0);
-                }
-                indexThread.getAndIncrement();
-            }
+            } while (!words.isEmpty());
         }
-        resultLoadData.add(FixedValue.TRUE);
+        resultWork.getAndIncrement();
         log.info("{} for searching interrupt!", Thread.currentThread().getName());
         Thread.currentThread().interrupt();
     }
@@ -62,15 +57,15 @@ public class DataSearchEngine implements Runnable {
             String page = getPageUri(modelWord.url(), modelSearch.getParentSite());
             String parentSite = page.equalsIgnoreCase("/") ?
                     modelWord.url() : page.isBlank() ?
-                    modelWord.url().substring(FixedValue.ZERO,modelWord.url().length()-1) :
+                    modelWord.url().substring(FixedValue.ZERO, modelWord.url().length() - 1) :
                     modelWord.url().split(page, 2)[0];
             page = page.isBlank() ? "/" : page;
-            String snippet = getSnippets(text, searchingWord);
+            String snippet = getSnippets(text, modelWord.word());
             Double relevance = getRelevance(searchingWord, modelWord.word());
             Integer keyMap = relevance <= 1.0 ? (10 - (int) (relevance * 10)) : 11;
             if (!snippet.isBlank()) {
                 results.get(keyMap).add(
-                        new SearchResultAnswer(parentSite,modelWord.name(),page,document.title(),snippet,relevance));
+                        new SearchResultAnswer(parentSite, modelWord.name(), page, document.title(), snippet, relevance));
             }
         }
     }
@@ -102,20 +97,26 @@ public class DataSearchEngine implements Runnable {
 
     private String getSnippets(String text, String word) {
         HashSet<String> snippets = new HashSet<>();
-        String[] data = text.split("\\s+");
+        ArrayList<String> words = new ArrayList<>();
+        Scanner scanner = new Scanner(text).useDelimiter("\\s+");
+        while (scanner.hasNext()) {
+            words.add(scanner.next());
+        }
         StringBuilder snippet;
-        for (int i = 0; i < data.length; i++) {
-            if (data[i].equalsIgnoreCase(word)) {
+        for (int i = 0; i < words.size(); i++) {
+            if (words.get(i).toLowerCase().contains(word.toLowerCase())) {
                 snippet = new StringBuilder();
                 snippet.append("<br>.....");
                 for (int b = i - 6; b < i; b++) {
                     if (b >= 0) {
-                        snippet.append(" ").append(data[b]);
+                        snippet.append(" ").append(words.get(b));
                     }
                 }
-                snippet.append(" <b>").append(data[i].toUpperCase()).append("</b>");
-                for (int c = i + 1; c < i + 6 && c < data.length; c++) {
-                    snippet.append(" ").append(data[c]);
+                snippet.append(" <b>").append(words.get(i).toUpperCase()).append("</b>");
+                for (int c = i + 1; c < i + 6; c++) {
+                    if (c < words.size()) {
+                        snippet.append(" ").append(words.get(c));
+                    }
                 }
                 snippet.append(".......");
                 snippets.add(snippet.toString());

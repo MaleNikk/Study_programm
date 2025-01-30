@@ -5,10 +5,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import searchengine.dto.entity.ModelSite;
 import searchengine.dto.entity.ModelWord;
+import searchengine.dto.model.ModelStart;
+import searchengine.dto.model.ModelStop;
 import searchengine.dto.model.TotalSearchResult;
 import searchengine.dto.model.ModelSearch;
 import searchengine.dto.statistics.StatisticsResponse;
-import searchengine.searching.processing.AppManagementImpl;
+import searchengine.searching.processing.indexing.IndexingManager;
+import searchengine.searching.processing.managing.AppManagementImpl;
+import searchengine.searching.processing.searching.SearchingManager;
 
 import java.util.List;
 
@@ -18,21 +22,27 @@ public final class ProjectService implements AppServiceImpl {
 
     private final AppManagementImpl management;
 
+    private final IndexingManager indexingManager;
+
+    private final SearchingManager searchingManager;
+
     @Autowired
-    public ProjectService(AppManagementImpl management) {
+    public ProjectService(AppManagementImpl management, IndexingManager indexingManager, SearchingManager searchingManager) {
         this.management = management;
+        this.indexingManager = indexingManager;
+        this.searchingManager = searchingManager;
     }
 
     @Override
-    public void startIndexing() {
+    public ModelStart startIndexing() {
         log.info("Init method startIndexing in data base. {}", this.getClass().getName());
-        management.startIndexing();
+        return indexingManager.start();
     }
 
     @Override
-    public void stopIndexing() {
+    public ModelStop stopIndexing() {
         log.info("Init method stopIndexing in data base. {}", this.getClass().getName());
-        management.stopIndexing();
+        return indexingManager.stop();
     }
 
     @Override
@@ -44,7 +54,7 @@ public final class ProjectService implements AppServiceImpl {
     @Override
     public TotalSearchResult findByWord(ModelSearch modelSearch) {
         log.info("Init method findByWord in data base. {}", this.getClass().getName());
-        return management.findByWord(modelSearch);
+        return searchingManager.findByWord(modelSearch);
     }
 
     @Override

@@ -6,12 +6,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import searchengine.dto.entity.ModelSite;
 import searchengine.dto.entity.ModelWord;
+import searchengine.dto.model.ModelStart;
 import searchengine.dto.model.TotalSearchResult;
 import searchengine.dto.model.ModelSearch;
-import searchengine.dto.model.ModelStartStop;
+import searchengine.dto.model.ModelStop;
 import searchengine.dto.statistics.StatisticsResponse;
-import searchengine.searching.processing.FixedValue;
-import searchengine.searching.processing.ProjectManagement;
+import searchengine.searching.processing.constant.FixedValue;
 import searchengine.searching.service.AppServiceImpl;
 
 import java.util.List;
@@ -35,25 +35,15 @@ public final class ApiController {
     }
 
     @GetMapping("/startIndexing")
-    public ResponseEntity<ModelStartStop> startIndexing() {
+    public ResponseEntity<ModelStart> startIndexing() {
         log.info("Init start indexing at system time: {}", System.currentTimeMillis());
-        if (!ProjectManagement.START_INDEXING.get()) {
-            service.startIndexing();
-            return ResponseEntity.ok(FixedValue.startIndexing());
-        } else {
-            return ResponseEntity.ok(FixedValue.wasStarted());
-        }
+        return ResponseEntity.ok(service.startIndexing());
     }
 
     @GetMapping("/stopIndexing")
-    public ResponseEntity<ModelStartStop> stopIndexing() {
+    public ResponseEntity<ModelStop> stopIndexing() {
         log.info("Init stop indexing at system time: {}", System.currentTimeMillis());
-        if (ProjectManagement.START_INDEXING.get() && ProjectManagement.STATUS.equals(FixedValue.IN_PROGRESS)) {
-            service.stopIndexing();
-            return ResponseEntity.ok(FixedValue.stopIndexing());
-        } else {
-            return ResponseEntity.ok(FixedValue.notStarted());
-        }
+        return ResponseEntity.ok(service.stopIndexing());
     }
 
     @GetMapping("/search")
