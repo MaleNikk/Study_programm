@@ -27,7 +27,7 @@ public final class SearchingThreadsManager implements SearchingManager {
 
     private final TotalSearchResult totalSearchResult;
 
-    private final TreeMap<Integer, ConcurrentLinkedQueue<SearchResultAnswer>> results;
+    private final TreeMap<Double, ConcurrentLinkedQueue<SearchResultAnswer>> results;
 
     private final AtomicInteger resultWork;
 
@@ -54,24 +54,13 @@ public final class SearchingThreadsManager implements SearchingManager {
             initResultStorage();
             initMultithreadingSearch(modelSearch, countThreads);
             initTimerSearch(countThreads);
-            totalSearchResult.setResult(FixedValue.TRUE);
-            totalSearchResult.setError(FixedValue.ERROR);
-            totalSearchResult.setData(new ArrayList<>());
-            results.values().forEach(sites -> totalSearchResult.getData()
-                    .addAll(sites));
-            totalSearchResult.setCount(totalSearchResult.getData().size());
-            totalSearchResult.setData(totalSearchResult.getData().subList(FixedValue.ZERO,
-                    totalSearchResult.getData().size() > modelSearch.getLimit() ? modelSearch.getLimit() :
-                            totalSearchResult.getData().size()));
+            buildSearchResult(modelSearch);
         }
-        log.info("Searching complete!");
+        log.info("Build answer complete!");
         return totalSearchResult;
     }
 
     private void initMultithreadingSearch(ModelSearch modelSearch, int countThreads) {
-        for (ModelWord modelWord : words ){
-            System.out.println(modelWord);
-        }
         do {
             Thread searching = new Thread(new DataSearchEngine(results, resultWork, words, modelSearch));
             runnableList.add(searching);
@@ -83,9 +72,6 @@ public final class SearchingThreadsManager implements SearchingManager {
         runnableList.clear();
         results.clear();
         resultWork.set(FixedValue.ZERO);
-        for (int i = 0; i < 12; i++) {
-            results.put(i, new ConcurrentLinkedQueue<>());
-        }
     }
 
     private void initTimerSearch(int countThreads) {
@@ -100,5 +86,17 @@ public final class SearchingThreadsManager implements SearchingManager {
                 throw new RuntimeException(e);
             }
         } while (resultWork.get() < countThreads);
+    }
+
+    private void buildSearchResult(ModelSearch modelSearch){
+        totalSearchResult.setResult(FixedValue.TRUE);
+        totalSearchResult.setError(FixedValue.ERROR);
+        totalSearchResult.setData(new ArrayList<>());
+        results.values().forEach(sites -> totalSearchResult.getData()
+                .addAll(sites));
+        totalSearchResult.setCount(totalSearchResult.getData().size());
+        totalSearchResult.setData(totalSearchResult.getData().subList(FixedValue.ZERO,
+                totalSearchResult.getData().size() > modelSearch.getLimit() ? modelSearch.getLimit() :
+                        totalSearchResult.getData().size()));
     }
 }

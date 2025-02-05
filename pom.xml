@@ -16,7 +16,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.5</version>
+        <version>3.4.1</version>
         <relativePath/>
     </parent>
 
@@ -32,19 +32,24 @@
         </dependency>
 
         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jdbc</artifactId>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jdbc</artifactId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
 
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <version>42.7.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
         </dependency>
 
         <dependency>
@@ -59,5 +64,101 @@
             <version>2.3</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <version>6.2.2</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <version>5.15.2</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>5.11.4</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>net.javacrumbs.json-unit</groupId>
+            <artifactId>json-unit</artifactId>
+            <version>3.2.7</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers</artifactId>
+            <version>1.20.4</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>dictionary.reader</groupId>
+            <artifactId>SearchEngine</artifactId>
+            <scope>system</scope>
+            <version>1.0</version>
+            <systemPath>${basedir}\src\main\resources\libraries\dictionary-reader-1.5.jar</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>english</groupId>
+            <artifactId>SearchEngine</artifactId>
+            <scope>system</scope>
+            <version>1.0</version>
+            <systemPath>${basedir}\src\main\resources\libraries\english-1.5.jar</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>lucene.analyzers.common</groupId>
+            <artifactId>SearchEngine</artifactId>
+            <scope>system</scope>
+            <version>1.0</version>
+            <systemPath>${basedir}\src\main\resources\libraries\lucene-analyzers-common-8.11.0.jar</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>lucene.core</groupId>
+            <artifactId>SearchEngine</artifactId>
+            <scope>system</scope>
+            <version>1.0</version>
+            <systemPath>${basedir}\src\main\resources\libraries\lucene-core-8.11.0.jar</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>morph</groupId>
+            <artifactId>SearchEngine</artifactId>
+            <scope>system</scope>
+            <version>1.0</version>
+            <systemPath>${basedir}\src\main\resources\libraries\morph-1.5.jar</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>morphology</groupId>
+            <artifactId>SearchEngine</artifactId>
+            <scope>system</scope>
+            <version>1.0</version>
+            <systemPath>${basedir}\src\main\resources\libraries\morphology-1.5.jar</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>russian</groupId>
+            <artifactId>SearchEngine</artifactId>
+            <scope>system</scope>
+            <version>1.0</version>
+            <systemPath>${basedir}\src\main\resources\libraries\russian-1.5.jar</systemPath>
+        </dependency>
     </dependencies>
+
 </project>

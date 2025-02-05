@@ -16,7 +16,7 @@ public final class FixedValue {
             CHECK_LINK_HTTP = "\"http://",
             CHECK_LINK_HTTPS = "\"https://",
             ERROR_SEARCH = "Задан пустой поисковый запрос",
-            ERROR_CONNECTION = "Указанная страница не найдена",
+            ERROR_CONNECTION = "Некорректный формат добавляемой страницы или адреса не существует",
             RESPONSE_OK = "Запрос выполнен успешно!",
             ERROR = "Something wrong, please read log file!";
 

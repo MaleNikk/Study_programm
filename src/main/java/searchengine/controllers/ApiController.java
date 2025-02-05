@@ -60,7 +60,7 @@ public final class ApiController {
     }
 
     @PostMapping("/indexPage")
-    public ResponseEntity<TotalSearchResult> indexing(@RequestParam String url) {
+    public ResponseEntity<TotalSearchResult> addPageForIndexing(@RequestParam String url) {
         log.info("Init add site for indexing at system time: {}", System.currentTimeMillis());
         if (!url.isBlank()) {
             service.addSite(url, "");
@@ -72,13 +72,13 @@ public final class ApiController {
     }
 
     @GetMapping("/words")
-    public ResponseEntity<List<ModelWord>> showAllWords() {
+    public ResponseEntity<List<ModelWord>> showSomeWords() {
         log.info("Init show all words at system time: {}", System.currentTimeMillis());
         return ResponseEntity.ok(service.showAllWords());
     }
 
     @GetMapping("/sites")
-    public ResponseEntity<List<ModelSite>> showAllSites() {
+    public ResponseEntity<List<ModelSite>> showSomeSites() {
         log.info("Init show all sites at system time: {}", System.currentTimeMillis());
         return ResponseEntity.ok(service.showAllSites());
     }
