@@ -3,23 +3,17 @@ package searchengine.searching.repository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.web.servlet.MockMvc;
+import searchengine.configuration.TestConfiguration;
 import searchengine.dto.entity.ModelParentSite;
 import searchengine.dto.entity.ModelWord;
-import searchengine.temporary.TestCreatorModel;
-import searchengine.temporary.TestSaveThread;
-import searchengine.temporary.TestUpdateThread;
+import searchengine.configuration.TestCreatorModel;
+import searchengine.configuration.TestSaveThread;
+import searchengine.configuration.TestUpdateThread;
 
 import java.util.List;
 import java.util.concurrent.*;
 
-public final class TestRepository {
-
-    private final AppManagementRepositoryImpl repository = Mockito.mock(AppManagementRepositoryImpl.class);
+public final class TestRepository extends TestConfiguration {
 
     @Test
     @DisplayName("Test multithreading save to Db")
@@ -30,6 +24,7 @@ public final class TestRepository {
             TestCreatorModel.TEST_EXECUTOR.submit(new TestSaveThread(forSaved, repository));
         });
         Assertions.assertNotNull(repository.showIndexedWords());
+        System.out.println("\nTest multithreading save complete successful.");
     }
 
     @Test
@@ -65,7 +60,7 @@ public final class TestRepository {
             Assertions.assertNotEquals(savedSite.lemmas(), updatedSite.lemmas());
             Assertions.assertNotEquals(savedSite.pages(), updatedSite.pages());
         }
-
+        System.out.println("\nTest multithreading update complete successful.");
     }
 
     @Test
@@ -91,5 +86,6 @@ public final class TestRepository {
         });
 
         Assertions.assertEquals(List.of(),repository.getParentSites());
+        System.out.println("\nTest multithreading delete complete successful.");
     }
 }

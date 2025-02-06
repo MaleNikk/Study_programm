@@ -25,6 +25,8 @@ public class DataSearchEngine implements Runnable {
 
     private final ModelSearch modelSearch;
 
+    private final AtomicInteger countWords = new AtomicInteger(1);
+
     @Override
     public void run() {
         log.info("Init tread for search: {}", Thread.currentThread().getName());
@@ -61,7 +63,7 @@ public class DataSearchEngine implements Runnable {
                     modelWord.url().split(page, 2)[0];
             page = page.isBlank() ? "/" : page;
             String snippet = getSnippets(text, modelWord.word());
-            Double relevance = getRelevance(searchingWord, modelWord.word());
+            double relevance = getRelevance(searchingWord, modelWord.word());
             if (!snippet.isBlank()) {
                 SearchResultAnswer answer =
                         new SearchResultAnswer(parentSite, modelWord.name(), page, document.title(), snippet, relevance);
@@ -74,17 +76,18 @@ public class DataSearchEngine implements Runnable {
         }
     }
 
-    private Double getRelevance(String searchWord, String savedWord) {
+    private double getRelevance(String searchWord, String savedWord) {
         char[] charsSearch = searchWord.toCharArray();
         char[] charsSaved = savedWord.toCharArray();
-        int indexLoop = Math.min(charsSearch.length, charsSaved.length);
-        double relevance = 3.0;
-        for (int i = 0; i < indexLoop; i++) {
+        int minLength = Math.min(charsSearch.length, charsSaved.length);
+        int maxLength = Math.max(charsSearch.length, charsSaved.length);
+        double relevance = maxLength - minLength > 1 ? 3.0 : 1.5;
+        for (int i = 0; i < minLength; i++) {
             if (Objects.equals(charsSearch[i], charsSaved[i])) {
-                relevance -= 0.1;
+                relevance -= 0.2;
             }
         }
-        return relevance;
+        return relevance - (double)countWords.get()/100;
     }
 
     private String getSnippets(String text, String word) {
@@ -97,21 +100,21 @@ public class DataSearchEngine implements Runnable {
             if (!result.isEmpty()) {
                 words.add(find);
                 if (words.size() == 7 || !scanner.hasNext()) {
-                    result.append(" ").append(String.join(" ", words)).append(".....");
+                    result.append(" ").append(String.join(" ", words)).append(".....<br>");
                     snippets.add(result.toString());
-                    System.out.println("Snippet second part: " + result + " Current thread: " + Thread.currentThread().getName());
                     words.clear();
                     result = new StringBuilder();
                 }
             } else if (find.toLowerCase().contains(word.toLowerCase())){
                 int beginIndex = words.size() >= 7 ? words.size()-7 : 0;
                 result.append("<br>.....").append(String.join(" ", words.subList(beginIndex, words.size())))
-                        .append("<b>").append(find.toUpperCase()).append("</b>");
+                        .append(" <b>").append(find.toUpperCase()).append("</b>");
                 words.clear();
             } else  {
                 words.add(find);
             }
         }
+        countWords.set(snippets.size());
         return snippets.toString();
     }
 

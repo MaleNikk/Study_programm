@@ -1,4 +1,4 @@
-package searchengine.temporary;
+package searchengine.configuration;
 
 import searchengine.dto.entity.ModelWord;
 import searchengine.searching.repository.AppManagementRepositoryImpl;

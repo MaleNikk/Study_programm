@@ -47,7 +47,9 @@ public final class ApiController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<TotalSearchResult> search(@RequestParam String query, String site, Integer offset, Integer limit) {
+    public ResponseEntity<TotalSearchResult> search(
+            @RequestParam String query, String site, Integer offset, Integer limit
+    ) {
         log.info("Init search word; {} at system time: {}. Options: parent site - {}, offset - {}, limit - {}",
                 query, System.nanoTime(), site, offset, limit);
         if (!query.isBlank()) {

@@ -126,7 +126,8 @@ public final class ManagementRepository implements AppManagementRepositoryImpl {
     public synchronized void saveStatistics(String parentUrl, Integer lemmas, Integer pages, String status) {
         ModelParentSite parentSite = findParentSiteByUrl(parentUrl);
         if (parentSite != null) {
-            String sql = "UPDATE parent_sites SET status = ?, status_time = ?, pages = ?, lemmas = ? WHERE url = ?";
+            String sql =
+                    "UPDATE parent_sites SET status = ?, status_time = ?, pages = ?, lemmas = ? WHERE url = ?";
             jdbcTemplate.update(sql, status, System.currentTimeMillis(), (pages + parentSite.pages()),
                     (lemmas + parentSite.lemmas()), parentUrl);
         }
@@ -174,7 +175,7 @@ public final class ManagementRepository implements AppManagementRepositoryImpl {
 
     @Override
     public List<ModelSite> showIndexedSites() {
-        String query = "SELECT * FROM all_urls ";
+        String query = "SELECT * FROM all_urls";
         return jdbcTemplate.query(query, mapperModelSite);
     }
 
@@ -187,7 +188,7 @@ public final class ManagementRepository implements AppManagementRepositoryImpl {
     @Override
     public void delete(String parentUrl) {
         String[] queries = {
-                "DELETE FROM all_urls WHERE parent_url = ? ",
+                "DELETE FROM all_urls WHERE parent_url = ?",
                 "DELETE FROM find_urls WHERE parent_url = ?",
                 "DELETE FROM bad_urls WHERE parent_url = ?",
                 "DELETE FROM sys_urls WHERE parent_url = ?",
@@ -204,7 +205,7 @@ public final class ManagementRepository implements AppManagementRepositoryImpl {
         ModelParentSite parentSite = DataAccessUtils.singleResult(
                 jdbcTemplate.query(query,
                         new ArgumentPreparedStatementSetter(new Object[]{modelParentSite.url()}),
-                        new RowMapperResultSetExtractor<>(mapperParentSite, 2)));
+                        new RowMapperResultSetExtractor<>(mapperParentSite, 0)));
         return Objects.equals(parentSite, null);
     }
 
@@ -213,7 +214,7 @@ public final class ManagementRepository implements AppManagementRepositoryImpl {
         ModelSite result = DataAccessUtils.singleResult(
                 jdbcTemplate.query(query,
                         new ArgumentPreparedStatementSetter(new Object[]{modelSite.url()}),
-                        new RowMapperResultSetExtractor<>(mapperModelSite, 4)));
+                        new RowMapperResultSetExtractor<>(mapperModelSite, 0)));
         return Objects.equals(result, null);
     }
 
@@ -222,7 +223,7 @@ public final class ManagementRepository implements AppManagementRepositoryImpl {
         ModelSite result = DataAccessUtils.singleResult(
                 jdbcTemplate.query(query,
                         new ArgumentPreparedStatementSetter(new Object[]{modelSite.url()}),
-                        new RowMapperResultSetExtractor<>(mapperModelSite, 4)));
+                        new RowMapperResultSetExtractor<>(mapperModelSite, 0)));
         return Objects.equals(result, null);
     }
 
@@ -231,6 +232,6 @@ public final class ManagementRepository implements AppManagementRepositoryImpl {
         return DataAccessUtils.singleResult(
                 jdbcTemplate.query(query,
                         new ArgumentPreparedStatementSetter(new Object[]{parentUrl}),
-                        new RowMapperResultSetExtractor<>(mapperParentSite, 2)));
+                        new RowMapperResultSetExtractor<>(mapperParentSite, 0)));
     }
 }

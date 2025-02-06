@@ -1,9 +1,8 @@
-package searchengine.temporary;
+package searchengine.configuration;
 
 import searchengine.dto.entity.ModelParentSite;
 import searchengine.dto.entity.ModelWord;
 import searchengine.dto.model.ModelSearch;
-import searchengine.dto.model.SearchResultAnswer;
 import searchengine.dto.model.TotalSearchResult;
 import searchengine.searching.processing.constant.FixedValue;
 

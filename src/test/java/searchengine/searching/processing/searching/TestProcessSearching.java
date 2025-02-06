@@ -1,19 +1,16 @@
 package searchengine.searching.processing.searching;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import searchengine.configuration.TestConfiguration;
 
-public final class TestProcessSearching {
-
-    @Test
-    @DisplayName("Test searching")
-    public void whenSearchWord_thenReturnAnswer(){
-        System.out.println("Test 1 complete successfully!");
-    }
+public final class TestProcessSearching extends TestConfiguration {
 
     @Test
-    @DisplayName("Test multithreading search")
-    public void whenStartSearch_thenReturnCountThreads(){
-        System.out.println("Test 2 complete successfully!");
+    @DisplayName("Test initialise searching object")
+    public void whenStartApplication_thenReturnNonNullObject(){
+        Assertions.assertNotNull(searchingManager);
+        System.out.println("\nTest init searching manager complete successfully!");
     }
 }

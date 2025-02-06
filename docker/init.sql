@@ -1,6 +1,6 @@
 CREATE SCHEMA IF NOT EXISTS storage;
 
-CREATE TABLE IF NOT EXISTS storage.bad_urls
+CREATE TABLE IF NOT EXISTS bad_urls
 (
     id SERIAL PRIMARY KEY,
     parent_url VARCHAR(350) NOT NULL,
@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS storage.bad_urls
     url VARCHAR(350) NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS storage.sys_urls
+CREATE TABLE IF NOT EXISTS sys_urls
 (
     id SERIAL PRIMARY KEY,
     parent_url VARCHAR(350) NOT NULL,
@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS storage.sys_urls
     url VARCHAR(350) NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS storage.all_urls
+CREATE TABLE IF NOT EXISTS all_urls
 (
     id SERIAL PRIMARY KEY,
     parent_url VARCHAR(350) NOT NULL,
@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS storage.all_urls
     url VARCHAR(350) NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS storage.find_urls
+CREATE TABLE IF NOT EXISTS find_urls
 (
     id SERIAL PRIMARY KEY,
     parent_url VARCHAR(350) NOT NULL,
@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS storage.find_urls
     url VARCHAR(350) NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS storage.parent_sites
+CREATE TABLE IF NOT EXISTS parent_sites
 (
     id SERIAL PRIMARY KEY,
     url VARCHAR(350) NOT NULL,
@@ -45,7 +45,7 @@ CREATE TABLE IF NOT EXISTS storage.parent_sites
     lemmas BIGINT DEFAULT NULL
 );
 
-CREATE TABLE IF NOT EXISTS storage.words
+CREATE TABLE IF NOT EXISTS words
 (
     id SERIAL PRIMARY KEY ,
     lemma VARCHAR(50) NOT NULL,
@@ -55,10 +55,10 @@ CREATE TABLE IF NOT EXISTS storage.words
     parent_url VARCHAR(350) NOT NULL
 );
 
-CREATE INDEX index_for_lemma ON storage.words (lemma);
-CREATE INDEX index_for_words_parent ON storage.words (parent_url);
-CREATE INDEX index_for_url ON storage.parent_sites (url);
-CREATE INDEX index_for_all_parent ON storage.all_urls (parent_url);
-CREATE INDEX index_for_sys_parent ON storage.sys_urls (parent_url);
-CREATE INDEX index_for_bad_parent ON storage.bad_urls (parent_url);
-CREATE INDEX index_for_find_parent ON storage.find_urls (parent_url);
+CREATE INDEX index_for_lemma ON words (lemma);
+CREATE INDEX index_for_words_parent ON words (parent_url);
+CREATE INDEX index_for_url ON parent_sites (url);
+CREATE INDEX index_for_all_parent ON all_urls (parent_url);
+CREATE INDEX index_for_sys_parent ON sys_urls (parent_url);
+CREATE INDEX index_for_bad_parent ON bad_urls (parent_url);
+CREATE INDEX index_for_find_parent ON find_urls (parent_url);
