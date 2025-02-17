@@ -56,16 +56,23 @@ public final class ManagementRepository implements AppManagementRepositoryImpl {
 
     @Override
     public synchronized void saveWord(List<ModelWord> modelWords) {
-        for (ModelWord modelWord : modelWords) {
-            String sql = "INSERT INTO words (lemma, word, url, name, parent_url) VALUES(?, ?, ?, ?, ?)";
-            jdbcTemplate.update(sql,
-                    modelWord.lemma(),
-                    modelWord.word(),
-                    modelWord.url(),
-                    modelWord.name(),
-                    modelWord.parentUrl()
-            );
-        }
+        String sql = "INSERT INTO words (lemma, word, url, name, parent_url) VALUES(?, ?, ?, ?, ?)";
+                jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
+            @Override
+            public void setValues(@NonNull PreparedStatement ps, int i) throws SQLException {
+                ModelWord modelWord = modelWords.get(i);
+                ps.setString(1, modelWord.lemma());
+                ps.setString(2, modelWord.word());
+                ps.setString(3, modelWord.url());
+                ps.setString(4, modelWord.name());
+                ps.setString(5, modelWord.parentUrl());
+            }
+
+            @Override
+            public int getBatchSize() {
+                return modelWords.size();
+            }
+        });
     }
 
     @Override
@@ -99,7 +106,7 @@ public final class ManagementRepository implements AppManagementRepositoryImpl {
                 .stream().filter(this::checkSavedParentSite).toList();
         if (!siteForSave.isEmpty()) {
             String sql = "INSERT INTO parent_sites (url, name, created_time, status, status_time, error, pages, lemmas)"
-                    .concat("VALUES(?, ?, ?, ?, ?, ?, ?, ?)");
+                    .concat(" VALUES(?, ?, ?, ?, ?, ?, ?, ?)");
             jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
                 @Override
                 public void setValues(@NonNull PreparedStatement ps, int i) throws SQLException {
@@ -125,6 +132,9 @@ public final class ManagementRepository implements AppManagementRepositoryImpl {
     @Override
     public synchronized void saveStatistics(String parentUrl, Integer lemmas, Integer pages, String status) {
         ModelParentSite parentSite = findParentSiteByUrl(parentUrl);
+        if (checkIndexedSite(parentUrl)){
+            status = FixedValue.INDEXING_COMPLETE;
+        }
         if (parentSite != null) {
             String sql =
                     "UPDATE parent_sites SET status = ?, status_time = ?, pages = ?, lemmas = ? WHERE url = ?";
@@ -140,7 +150,7 @@ public final class ManagementRepository implements AppManagementRepositoryImpl {
         ModelSite result = null;
         if (!sites.isEmpty()) {
             result = sites.get(FixedValue.ZERO);
-            String sqlSave = "INSERT INTO all_urls (parent_url, name,url) VALUES(?, ?, ?)";
+            String sqlSave = "INSERT INTO all_urls (parent_url, name, url) VALUES(?, ?, ?)";
             jdbcTemplate.update(sqlSave,
                     result.parentUrl(),
                     result.name(),
@@ -225,6 +235,13 @@ public final class ManagementRepository implements AppManagementRepositoryImpl {
                         new ArgumentPreparedStatementSetter(new Object[]{modelSite.url()}),
                         new RowMapperResultSetExtractor<>(mapperModelSite, 0)));
         return Objects.equals(result, null);
+    }
+
+    private boolean checkIndexedSite(String parentUrl) {
+        List<ModelSite> modelSites = new ArrayList<>(List.of());
+        String query = "SELECT * FROM find_urls WHERE parent_url = '".concat(parentUrl).concat("'");
+        modelSites.addAll(jdbcTemplate.query(query,mapperModelSite));
+        return modelSites.isEmpty();
     }
 
     private ModelParentSite findParentSiteByUrl(String parentUrl) {

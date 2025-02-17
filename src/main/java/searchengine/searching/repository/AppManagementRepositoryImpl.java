@@ -31,5 +31,4 @@ public interface AppManagementRepositoryImpl {
     List<ModelSite> showIndexedSites();
 
     List<ModelParentSite> getParentSites();
-
 }

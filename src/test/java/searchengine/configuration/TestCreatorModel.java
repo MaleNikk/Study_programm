@@ -3,7 +3,6 @@ package searchengine.configuration;
 import searchengine.dto.entity.ModelParentSite;
 import searchengine.dto.entity.ModelWord;
 import searchengine.dto.model.ModelSearch;
-import searchengine.dto.model.TotalSearchResult;
 import searchengine.searching.processing.constant.FixedValue;
 
 import java.time.Instant;
@@ -16,8 +15,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public final class TestCreatorModel {
 
-    public static final TotalSearchResult TEST_ANSWER = initAnswer();
-
     public static final ModelSearch TEST_MODEL_SEARCH = initModel();
 
     public static final ExecutorService TEST_EXECUTOR = Executors.newFixedThreadPool(FixedValue.COUNT_THREADS);
@@ -27,15 +24,6 @@ public final class TestCreatorModel {
     public static final List<ModelParentSite> PARENT_SITE_LIST_SAVE = initCollectionParentSites(FixedValue.ZERO);
 
     public static final List<ModelParentSite> PARENT_SITE_LIST_UPDATE = initCollectionParentSites(FixedValue.TIME_SLEEP);
-
-    private static TotalSearchResult initAnswer(){
-        TotalSearchResult searchResult = new TotalSearchResult();
-        searchResult.setResult(FixedValue.TRUE);
-        searchResult.setError(FixedValue.ERROR);
-        searchResult.setCount(FixedValue.COUNT_THREADS);
-        searchResult.setData(List.of());
-        return searchResult;
-    }
 
     private static ModelSearch initModel(){
         return new ModelSearch("test_1","http://localhost:8080/test_1", FixedValue.ZERO,FixedValue.ZERO);

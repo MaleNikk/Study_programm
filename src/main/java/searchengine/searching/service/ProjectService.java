@@ -46,9 +46,9 @@ public final class ProjectService implements AppServiceImpl {
     }
 
     @Override
-    public void addSite(String url, String name) {
+    public boolean addSite(String url, String name) {
         log.info("Init method addSite in data base. {}", this.getClass().getName());
-        management.addSite(url, name);
+        return management.addSite(url, name);
     }
 
     @Override

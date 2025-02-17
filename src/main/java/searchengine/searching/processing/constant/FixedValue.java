@@ -1,6 +1,7 @@
 package searchengine.searching.processing.constant;
 
 import searchengine.dto.entity.*;
+import searchengine.dto.model.ModelQueryAnswer;
 import searchengine.dto.model.TotalSearchResult;
 import java.time.LocalDateTime;
 
@@ -13,12 +14,11 @@ public final class FixedValue {
             INDEXING_COMPLETE = "INDEXED",
             INDEXING_NOT_STARTED = "INDEXING NOT STARTED",
             REGEX_ABC = "[^a-zA-Zа-яА-ЯёЁ]",
-            CHECK_LINK_HTTP = "\"http://",
-            CHECK_LINK_HTTPS = "\"https://",
+            CHECK_LINK_HTTP = "http",
             ERROR_SEARCH = "Задан пустой поисковый запрос",
             ERROR_CONNECTION = "Некорректный формат добавляемой страницы или адреса не существует",
             RESPONSE_OK = "Запрос выполнен успешно!",
-            ERROR = "Something wrong, please read log file!";
+            ERROR = "No errors were found in the program's operation!";
 
 
     public static final Boolean
@@ -31,23 +31,19 @@ public final class FixedValue {
             TIME_SLEEP = 5000;
 
     public static ModelParentSite getNewModelParentSite(String url, String name) {
-        return new ModelParentSite(url, name, LocalDateTime.now().toString(), INDEXING_NOT_STARTED, System.nanoTime(),
-                ERROR, 0, 0);
-    }
-
-    public static ModelSite getNewModelSite(String url, String parentUrl, String name){
-        return new ModelSite(url, parentUrl, name);
+        return new ModelParentSite(url, name, LocalDateTime.now().toString(),
+                INDEXING_NOT_STARTED, System.nanoTime(), ERROR, 0, 0);
     }
 
     public static TotalSearchResult getBadResponse(){
         return new TotalSearchResult(FALSE, ERROR_SEARCH);
     }
 
-    public static TotalSearchResult getOkResponse(){
-        return new TotalSearchResult(TRUE, RESPONSE_OK);
+    public static ModelQueryAnswer getOkResponse(){
+        return new ModelQueryAnswer(TRUE, RESPONSE_OK);
     }
 
-    public static TotalSearchResult getBadResponseAddSite() {
-        return new TotalSearchResult(FALSE, ERROR_CONNECTION);
+    public static ModelQueryAnswer getBadResponseAddSite() {
+        return new ModelQueryAnswer(FALSE, ERROR_CONNECTION);
     }
 }

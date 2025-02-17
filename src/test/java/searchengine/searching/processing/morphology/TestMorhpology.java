@@ -7,21 +7,24 @@ import searchengine.searching.processing.morhpology.ProjectMorphology;
 
 public final class TestMorhpology {
 
+    private final ProjectMorphology projectMorphology = new ProjectMorphology();
+
     @Test
     @DisplayName("Test morphology with normal words")
     public void whenPushWord_thenReturnBasicWord(){
 
-        String testRuWord = "камни";
-        String testEnWord = "pancakes";
+        if (projectMorphology.isWithMorphology()) {
 
-        String expectedRuWord = "камень";
-        String expectedEnWord = "pancake";
+            String testRuWord = "камни";
+            String testEnWord = "pancakes";
 
-        ProjectMorphology projectMorphology = new ProjectMorphology();
+            String expectedRuWord = "камень";
+            String expectedEnWord = "pancake";
 
-        Assertions.assertEquals(expectedRuWord,projectMorphology.getForm(testRuWord));
+            Assertions.assertEquals(expectedRuWord, projectMorphology.getForm(testRuWord));
 
-        Assertions.assertEquals(expectedEnWord,projectMorphology.getForm(testEnWord));
+            Assertions.assertEquals(expectedEnWord, projectMorphology.getForm(testEnWord));
+        }
 
         System.out.println("\nTest morphology with normal words complete successful.");
     }
@@ -30,19 +33,20 @@ public final class TestMorhpology {
     @DisplayName("Test morphology with part of speech")
     public void whenPushPart_thenReturnEmptyWord(){
 
-        String testWord_1 = "либо";
-        String testWord_2 = "благодаря";
-        String testWord_3 = "что";
+        if (projectMorphology.isWithMorphology()) {
 
-        String expectedWord = " ";
+            String testWord_1 = "либо";
+            String testWord_2 = "благодаря";
+            String testWord_3 = "что";
 
-        ProjectMorphology projectMorphology = new ProjectMorphology();
+            String expectedWord = " ";
 
-        Assertions.assertEquals(expectedWord,projectMorphology.getForm(testWord_1));
+            Assertions.assertEquals(expectedWord, projectMorphology.getForm(testWord_1));
 
-        Assertions.assertEquals(expectedWord,projectMorphology.getForm(testWord_2));
+            Assertions.assertEquals(expectedWord, projectMorphology.getForm(testWord_2));
 
-        Assertions.assertEquals(expectedWord,projectMorphology.getForm(testWord_3));
+            Assertions.assertEquals(expectedWord, projectMorphology.getForm(testWord_3));
+        }
 
         System.out.println("\nTest morphology with parts of speech complete successful.");
     }

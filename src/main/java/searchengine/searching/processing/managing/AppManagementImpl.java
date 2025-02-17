@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface AppManagementImpl {
 
-    void addSite(String url, String name);
+    boolean addSite(String url, String name);
 
     List<ModelSite> showAllSites();
 

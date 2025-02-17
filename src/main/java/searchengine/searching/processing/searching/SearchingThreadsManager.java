@@ -46,55 +46,121 @@ public final class SearchingThreadsManager implements SearchingManager {
 
     @Override
     public TotalSearchResult findByWord(ModelSearch modelSearch) {
+
         log.info("Init method searching word: {}. {}", modelSearch.getWord(), this.getClass().getName());
-        words.addAll(managementRepository.findModelWords(modelSearch.getWord()));
+
+        words.clear();
+
+        if (Objects.equals(modelSearch.getParentSite(),null)) {
+
+            modelSearch.setParentSite(FixedValue.SEARCH_IN_ALL);
+        }
+
+        List<String> searchingWords = List.of(modelSearch.getWord().trim().split("\\s+"));
+
+        HashSet<String> findLemmas = new HashSet<>();
+
+        buildDataSearching(findLemmas,searchingWords);
+
         int countThreads = words.size() > FixedValue.COUNT_THREADS ? FixedValue.COUNT_THREADS : words.size();
+
         if (!Objects.equals(lastSearchWord, modelSearch.getWord())) {
+
             lastSearchWord = modelSearch.getWord();
+
             initResultStorage();
-            initMultithreadingSearch(modelSearch, countThreads);
+
+            initMultithreadingSearch(modelSearch, countThreads, findLemmas);
+
             initTimerSearch(countThreads);
+
             buildSearchResult(modelSearch);
         }
+
         log.info("Build answer complete!");
+
         return totalSearchResult;
     }
 
-    private void initMultithreadingSearch(ModelSearch modelSearch, int countThreads) {
+    private void initMultithreadingSearch(ModelSearch modelSearch, int countThreads, HashSet<String> findLemmas) {
+
         do {
-            Thread searching = new Thread(new DataSearchEngine(results, resultWork, words, modelSearch));
-            runnableList.add(searching);
+            runnableList.add(new DataSearchEngine(results, resultWork, words, modelSearch, findLemmas));
+
         } while (runnableList.size() < countThreads && runnableList.size() < words.size());
+
         runnableList.forEach(Thread::start);
     }
 
     private void initResultStorage() {
+
         runnableList.clear();
+
         results.clear();
+
         resultWork.set(FixedValue.ZERO);
     }
 
+    private void buildDataSearching(HashSet<String> findLemmas,  List<String> searchingWords){
+
+        HashMap<String, ModelWord> findUrls = new HashMap<>();
+
+        for (String word : searchingWords) {
+
+            List<ModelWord> modelWords = managementRepository.findModelWords(word);
+
+            if (!modelWords.isEmpty()) {
+
+                for (ModelWord modelWord : modelWords){
+
+                    if (!findUrls.containsKey(modelWord.url())){
+
+                        findUrls.put(modelWord.url(),modelWord);
+
+                        findLemmas.add(modelWord.lemma());
+                    }
+                }
+            }
+        }
+        words.addAll(findUrls.values());
+    }
+
     private void initTimerSearch(int countThreads) {
+
         long timeStart = System.nanoTime();
+
         do {
             log.info("Searching in progress, timeout: {} sec.",
+
                     TimeUnit.NANOSECONDS.toSeconds(System.nanoTime() - timeStart));
+
             try {
+
                 TimeUnit.MILLISECONDS.sleep(FixedValue.TIME_SLEEP);
+
             } catch (InterruptedException e) {
+
                 log.info("Current search was interrupted! Please read log file!");
+
                 throw new RuntimeException(e);
             }
+
         } while (resultWork.get() < countThreads);
     }
 
     private void buildSearchResult(ModelSearch modelSearch){
+
         totalSearchResult.setResult(FixedValue.TRUE);
+
         totalSearchResult.setError(FixedValue.ERROR);
+
         totalSearchResult.setData(new ArrayList<>());
+
         results.values().forEach(sites -> totalSearchResult.getData()
                 .addAll(sites));
+
         totalSearchResult.setCount(totalSearchResult.getData().size());
+
         totalSearchResult.setData(totalSearchResult.getData().subList(FixedValue.ZERO,
                 totalSearchResult.getData().size() > modelSearch.getLimit() ? modelSearch.getLimit() :
                         totalSearchResult.getData().size()));

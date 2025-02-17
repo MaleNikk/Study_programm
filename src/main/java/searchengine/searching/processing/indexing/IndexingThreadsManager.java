@@ -56,10 +56,14 @@ public final class IndexingThreadsManager implements IndexingManager {
     }
 
     private void initStartedListSites() {
+
         List<ModelSite> foundSiteEntities = new ArrayList<>();
+
         managementRepository.getParentSites().forEach(parent ->
-                foundSiteEntities.add(FixedValue.getNewModelSite(parent.url(), parent.url(), parent.name())));
+                foundSiteEntities.add(new ModelSite(parent.url(), parent.url(), parent.name())));
+
         foundSiteEntities.forEach(site -> managementRepository.delete(site.parentUrl()));
+
         managementRepository.saveFoundSites(foundSiteEntities);
     }
 }

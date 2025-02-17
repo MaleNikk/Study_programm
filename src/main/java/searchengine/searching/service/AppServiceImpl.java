@@ -15,7 +15,7 @@ public interface AppServiceImpl {
 
     ModelStop stopIndexing();
 
-    void addSite(String url, String name);
+    boolean addSite(String url, String name);
 
     List<ModelSite> showAllSites();
 

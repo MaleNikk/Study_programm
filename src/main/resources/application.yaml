@@ -9,6 +9,9 @@ indexing-settings:
     - url: https://www.playback.ru
       name: PlayBack.Ru
 
+init:
+  morphology: YES #or NO
+
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/storage

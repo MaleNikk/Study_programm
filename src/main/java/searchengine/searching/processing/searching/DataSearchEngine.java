@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @AllArgsConstructor
 @Slf4j
-public class DataSearchEngine implements Runnable {
+public class DataSearchEngine extends Thread {
 
     private final TreeMap<Double, ConcurrentLinkedQueue<SearchResultAnswer>> results;
 
@@ -25,7 +25,7 @@ public class DataSearchEngine implements Runnable {
 
     private final ModelSearch modelSearch;
 
-    private final AtomicInteger countWords = new AtomicInteger(1);
+    private final HashSet<String> findLemmas;
 
     @Override
     public void run() {
@@ -35,93 +35,87 @@ public class DataSearchEngine implements Runnable {
 
     public void findByWord() {
         if (!words.isEmpty()) {
+
             do {
                 ModelWord modelWord = words.poll();
+
                 if (Objects.equals(modelSearch.getParentSite(), FixedValue.SEARCH_IN_ALL)) {
+
                     buildDataResult(modelSearch.getWord(), modelWord);
+
                 } else {
                     if (modelWord.parentUrl().equalsIgnoreCase(modelSearch.getParentSite())) {
+
                         buildDataResult(modelSearch.getWord(), modelWord);
                     }
                 }
             } while (!words.isEmpty());
         }
+
         resultWork.getAndIncrement();
+
         log.info("{}: searching complete!", Thread.currentThread().getName());
+
         Thread.currentThread().interrupt();
     }
 
     private void buildDataResult(String searchingWord, ModelWord modelWord) {
+
+        AtomicInteger countWords = new AtomicInteger(1);
+
         FoundDataSite foundDataSite = new FoundDataSite();
+
+        CalculateRelevance calculateRelevance = new CalculateRelevance();
+
+        SnippetBuilder snippetBuilder = new SnippetBuilder(countWords,findLemmas,calculateRelevance);
+
         Document document = foundDataSite.getDocument(modelWord.url());
+
         if (document != null) {
-            String text = document.getAllElements().text();
-            String page = getPageUri(modelWord.url(), modelSearch.getParentSite());
-            String parentSite = page.equalsIgnoreCase("/") ?
-                    modelWord.url() : page.isBlank() ?
-                    modelWord.url().substring(FixedValue.ZERO, modelWord.url().length() - 1) :
-                    modelWord.url().split(page, 2)[0];
+
+            String text = foundDataSite.getSiteText(document);
+
+            String page = foundPageUri(modelWord.url(), modelSearch.getParentSite());
+
+            String parentSite = foundParentUri(page,modelWord);
+
             page = page.isBlank() ? "/" : page;
-            String snippet = getSnippets(text, modelWord.word());
-            double relevance = getRelevance(searchingWord, modelWord.word());
+
+            String snippet = snippetBuilder.foundSnippets(text, modelWord.lemma());
+
+            double relevance = calculateRelevance.foundRelevance(searchingWord, modelWord.word(),countWords.get());
+
             if (!snippet.isBlank()) {
+
                 SearchResultAnswer answer =
                         new SearchResultAnswer(parentSite, modelWord.name(), page, document.title(), snippet, relevance);
+
                 if (results.containsKey(relevance)) {
+
                     results.get(relevance).add(answer);
+
                 } else {
+
                     results.put(relevance, new ConcurrentLinkedQueue<>(Set.of(answer)));
                 }
             }
         }
     }
 
-    private double getRelevance(String searchWord, String savedWord) {
-        char[] charsSearch = searchWord.toCharArray();
-        char[] charsSaved = savedWord.toCharArray();
-        int minLength = Math.min(charsSearch.length, charsSaved.length);
-        int maxLength = Math.max(charsSearch.length, charsSaved.length);
-        double relevance = maxLength - minLength > 1 ? 3.0 : 1.5;
-        for (int i = 0; i < minLength; i++) {
-            if (Objects.equals(charsSearch[i], charsSaved[i])) {
-                relevance -= 0.2;
-            }
-        }
-        return relevance - (double)countWords.get()/100;
-    }
+    private String foundPageUri(String site, String parentSite) {
 
-    private String getSnippets(String text, String word) {
-        HashSet<String> snippets = new HashSet<>();
-        ArrayList<String> words = new ArrayList<>();
-        Scanner scanner = new Scanner(text).useDelimiter("\\s+");
-        StringBuilder result = new StringBuilder();
-        while (scanner.hasNext()){
-            String find = scanner.next();
-            if (!result.isEmpty()) {
-                words.add(find);
-                if (words.size() == 7 || !scanner.hasNext()) {
-                    result.append(" ").append(String.join(" ", words)).append(".....<br>");
-                    snippets.add(result.toString());
-                    words.clear();
-                    result = new StringBuilder();
-                }
-            } else if (find.toLowerCase().contains(word.toLowerCase())){
-                int beginIndex = words.size() >= 7 ? words.size()-7 : 0;
-                result.append("<br>.....").append(String.join(" ", words.subList(beginIndex, words.size())))
-                        .append(" <b>").append(find.toUpperCase()).append("</b>");
-                words.clear();
-            } else  {
-                words.add(find);
-            }
-        }
-        countWords.set(snippets.size());
-        return snippets.toString();
-    }
-
-    private String getPageUri(String site, String parentSite) {
         String[] data = site.split("/", 4);
+
         return site.equalsIgnoreCase(parentSite) || !Objects.equals(data.length, 4) ? "/" :
                 (data[3].isBlank() ? "" : data[3]);
+    }
+
+    private String foundParentUri(String pageUri, ModelWord modelWord){
+        return pageUri.equalsIgnoreCase("/") ?
+                modelWord.url() : pageUri.isBlank() ?
+                modelWord.url().substring(FixedValue.ZERO, modelWord.url().length() - 1) :
+                modelWord.url().split(pageUri, 2)[0];
+
     }
 }
 
