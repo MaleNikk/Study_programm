@@ -7,7 +7,7 @@ import searchengine.config.AppProperties;
 import searchengine.dto.entity.*;
 import searchengine.config.FixedValue;
 import searchengine.repository.RepositoryProject;
-import searchengine.service.ManagementBuildingData;
+import searchengine.service.ServiceBuildingDataImpl;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -33,7 +33,7 @@ public class ThreadBuilderData extends Thread {
     @Override
     public void run() {
         log.info("Init thread for indexing.");
-        while (ManagementBuildingData.START.get()) {
+        while (ServiceBuildingDataImpl.START.get()) {
             if (!sites.isEmpty()) {
                 ModelSite modelSite = takeEntity();
                 if (threads.size() < properties.getActiveThreads() && sites.size() > properties.getActiveThreads()) {
@@ -63,6 +63,7 @@ public class ThreadBuilderData extends Thread {
             } else {
                 repository.saveBadSite(modelSite);
             }
+
         }
     }
 
@@ -74,7 +75,7 @@ public class ThreadBuilderData extends Thread {
     }
 
     private int saveFoundSites(HashSet<String> links, ModelSite modelSite) {
-        repository.saveFoundSites(links.stream().filter(link ->!checkUrl(link))
+        repository.saveFoundSites(links.stream()
                 .map(link -> new ModelSite(link, modelSite.parentUrl(), modelSite.name())).toList());
         return links.size();
     }

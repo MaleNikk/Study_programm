@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import searchengine.dto.entity.ModelParentSite;
 import searchengine.config.FixedValue;
-import searchengine.service.ManagementBuildingData;
+import searchengine.service.ServiceBuildingDataImpl;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -25,6 +25,6 @@ public final class TotalStatistics {
             pages.set(pages.get() + site.getPages());
             lemmas.set(lemmas.get() + site.getLemmas());
         });
-        return new TotalStatistics(sites.get(),pages.get(),lemmas.get(), ManagementBuildingData.START.get());
+        return new TotalStatistics(sites.get(),pages.get(),lemmas.get(), ServiceBuildingDataImpl.START.get());
     }
 }

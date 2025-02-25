@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 @Slf4j
 @Service
-public class ManagementBuildingData implements ServiceBuildingData {
+public class ServiceBuildingDataImpl implements ServiceBuildingData {
 
     private final RepositoryProject repository;
 
@@ -35,8 +35,8 @@ public class ManagementBuildingData implements ServiceBuildingData {
     public static final AtomicBoolean START = new AtomicBoolean(FixedValue.FALSE);
 
     @Autowired
-    public ManagementBuildingData(RepositoryProject repository, LemmaCreator morphology,
-                                  ScanDataSite dataSite, AppProperties properties) {
+    public ServiceBuildingDataImpl(RepositoryProject repository, LemmaCreator morphology,
+                                   ScanDataSite dataSite, AppProperties properties) {
         this.morphology = morphology;
         this.dataSite = dataSite;
         this.repository = repository;

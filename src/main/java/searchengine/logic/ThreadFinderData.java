@@ -40,10 +40,10 @@ public class ThreadFinderData extends Thread {
         Document document = dataSite.initDocument(modelWord.url());
         if (document != null) {
             String text = dataSite.textForSnippet(document);
+            String snippet = foundSnippet(text);
             String title = document.title();
             String parentPage = findParentPage(modelWord.url());
             String childPage = findChildPage(modelWord.url(), parentPage);
-            String snippet = foundSnippet(text);
             double relevance = findRelevance(models);
             if (!snippet.isBlank()) {
                 ResultAnswer answer =
@@ -58,7 +58,7 @@ public class ThreadFinderData extends Thread {
     }
 
     private double findRelevance(List<ModelWord> models) {
-        int defaultSize = 1000 - models.size();
+        int defaultSize = Objects.equals(models.size(), lemmas.size()) ? 500 : 1000;
         for (ModelWord model : models) {
             defaultSize = defaultSize - model.frequency();
         }
@@ -80,31 +80,21 @@ public class ThreadFinderData extends Thread {
     }
 
     public String foundSnippet(String text) {
-        String snippet = "Snippet not found!";
-        String[] strings = text.split("\\.");
-        for (String string : strings) {
-            List<Boolean> check = new ArrayList<>();
-            for (String find : lemmas) {
-                String regexWord = "(?iu)".concat(find).concat("([a-zA-Zа-яА-ЯёЁ]*)?");
-                Matcher matcher = Pattern.compile(regexWord).matcher(string);
-                if (matcher.find()) {
-                    check.add(true);
+        StringBuilder builder = new StringBuilder("</br>...");
+        String[] data = text.split("[.,]");
+        for (String snippet : data) {
+            if (snippet.length() < 250 && snippet.length() > 50) {
+                for (String find : lemmas) {
+                    Matcher matcher = Pattern.compile("(?iu)\\s".concat(find)
+                            .concat("[a-zA-Zа-яА-ЯёЁ]*")).matcher(snippet);
+                    if (matcher.find()) {
+                        String word = matcher.group();
+                        String textData = snippet.replaceAll(word,"<b>".concat(word.toUpperCase()).concat("</b> "));
+                        return builder.append(textData).append("...").toString();
+                    }
                 }
             }
-            if (check.size() == lemmas.size()) {
-                break;
-            }
         }
-        for (String found : lemmas) {
-            String regexWord = "(?iu)".concat(found).concat("([a-zA-Zа-яА-ЯёЁ]*)?");
-            Matcher matcher = Pattern.compile(regexWord).matcher(snippet);
-            if (matcher.find()) {
-                String word = matcher.group();
-                snippet = "</br>...".concat(matcher.replaceAll("<b>".concat(word.toUpperCase()).concat("</b>")))
-                        .concat("....");
-            }
-        }
-        return snippet;
+        return "";
     }
 }
-

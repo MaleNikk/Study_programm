@@ -21,7 +21,7 @@ import java.util.stream.Stream;
 
 @Service
 @Slf4j
-public class ManagementFindingData implements ServiceFindingData {
+public class ServiceFindingDataImpl implements ServiceFindingData {
 
     private final RepositoryProject repository;
 
@@ -38,7 +38,7 @@ public class ManagementFindingData implements ServiceFindingData {
     private String lastSearchData;
 
     @Autowired
-    public ManagementFindingData(RepositoryProject repository, LemmaCreator morphology, AppProperties properties) {
+    public ServiceFindingDataImpl(RepositoryProject repository, LemmaCreator morphology, AppProperties properties) {
         this.morphology = morphology;
         this.properties = properties;
         this.listModels = new ConcurrentLinkedQueue<>();
@@ -56,16 +56,16 @@ public class ManagementFindingData implements ServiceFindingData {
             listModels.clear();
             results.clear();
             List<String> findLemmas = Stream.of(modelFinder.getWord().trim().split("\\s+"))
-                    .map(morphology::getForm).filter(lemma -> lemma.length() > 3).toList();
+                    .map(morphology::getForm).toList();
             startFindWords(findLemmas, modelFinder.getParentSite(), modelFinder.getLimit());
             startThreads(findLemmas);
         }
         return buildTotalAnswer(modelFinder);
     }
 
-    private void startFindWords(List<String> findLemmas, String url, int limit) {
+    private void startFindWords(List<String> lemmas, String url, int limit) {
         HashMap<String, List<ModelWord>> dataFromDb = new HashMap<>();
-        for (String lemma : findLemmas) {
+        for (String lemma : lemmas) {
             repository.takeModelWords(lemma, url, limit).forEach(model -> {
                 if (dataFromDb.containsKey(model.url())) {
                     dataFromDb.get(model.url()).add(model);
@@ -74,13 +74,13 @@ public class ManagementFindingData implements ServiceFindingData {
                 }
             });
         }
-        listModels.addAll(dataFromDb.values().stream().filter(list->list.size()==findLemmas.size()).toList());
+        listModels.addAll(dataFromDb.values().stream().toList());
     }
 
-    private void startThreads(List<String> findLemmas) {
+    private void startThreads(List<String> lemmas) {
         threads.clear();
         while (!listModels.isEmpty() && threads.size() < properties.getActiveThreads()) {
-            Thread thread = new ThreadFinderData(results, listModels, findLemmas, new ScanDataSite());
+            Thread thread = new ThreadFinderData(results, listModels, lemmas, new ScanDataSite());
             threads.add(thread);
             thread.start();
         }
@@ -92,19 +92,19 @@ public class ManagementFindingData implements ServiceFindingData {
         searchResult.setResult(FixedValue.TRUE);
         searchResult.setError(FixedValue.NO_ERROR);
         searchResult.setCount(results.size());
-        searchResult.setData(answers());
-        return new TotalSearchResult(FixedValue.TRUE, answers().size(), FixedValue.NO_ERROR,
-                answers().subList(FixedValue.ZERO, answers().size() > modelFinder.getLimit() ?
-                        modelFinder.getLimit() : answers().size()));
+        searchResult.setData(getAnswers());
+        return new TotalSearchResult(FixedValue.TRUE, getAnswers().size(), FixedValue.NO_ERROR,
+                getAnswers().subList(FixedValue.ZERO, getAnswers().size() > modelFinder.getLimit() ?
+                        modelFinder.getLimit() : getAnswers().size()));
     }
 
-    private List<ResultAnswer> answers() {
+    private List<ResultAnswer> getAnswers() {
         return results.values().stream().flatMap(Collection::stream).toList();
     }
 
     private void waitBuilder() {
         try {
-            TimeUnit.MILLISECONDS.sleep(1500);
+            TimeUnit.MILLISECONDS.sleep(1000);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }

@@ -16,12 +16,12 @@ import java.util.*;
 
 @Service
 @Slf4j
-public class ManagementAdditions implements ServiceAdditions {
+public class ServiceAdditionsImpl implements ServiceAdditions {
 
     private final RepositoryProject repository;
 
     @Autowired
-    public ManagementAdditions(RepositoryProject repository) {
+    public ServiceAdditionsImpl(RepositoryProject repository) {
         this.repository = repository;
     }
 

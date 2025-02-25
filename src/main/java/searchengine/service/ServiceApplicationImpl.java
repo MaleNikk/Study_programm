@@ -15,7 +15,7 @@ import java.util.List;
 
 @Service
 @Slf4j
-public class ApplicationService implements ServiceApplication {
+public class ServiceApplicationImpl implements ServiceApplication {
 
     private final ServiceAdditions management;
 
@@ -24,7 +24,7 @@ public class ApplicationService implements ServiceApplication {
     private final ServiceFindingData scanManager;
 
     @Autowired
-    public ApplicationService(ServiceAdditions management, ServiceBuildingData indexingManager, ServiceFindingData scanManager) {
+    public ServiceApplicationImpl(ServiceAdditions management, ServiceBuildingData indexingManager, ServiceFindingData scanManager) {
         this.management = management;
         this.indexingManager = indexingManager;
         this.scanManager = scanManager;

@@ -43,8 +43,9 @@ public final class LemmaCreator {
                 return "";
             }
         }
-        return clearWord.length() < 6 ? clearWord.substring(0,  clearWord.length() - 1) :
-                clearWord.substring(0, clearWord.length() - 2);
+        return clearWord.length() < 4 ? clearWord.substring(0, clearWord.length() - 1) :
+                clearWord.length() < 8 ? clearWord.substring(0, clearWord.length() - 2) :
+                        clearWord.substring(0,clearWord.length()-3);
     }
 
     private String getRuLemma(String word) throws IOException {

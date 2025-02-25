@@ -11,7 +11,7 @@ import searchengine.dto.mapper.RowMapperModelSite;
 import searchengine.dto.mapper.RowMapperParentSite;
 import searchengine.dto.mapper.RowMapperWord;
 import searchengine.config.FixedValue;
-import searchengine.service.ManagementBuildingData;
+import searchengine.service.ServiceBuildingDataImpl;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -20,7 +20,7 @@ import java.util.stream.Stream;
 
 @Repository
 @Slf4j
-public class ApplicationRepository implements RepositoryProject {
+public class RepositoryProjectImpl implements RepositoryProject {
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -31,7 +31,7 @@ public class ApplicationRepository implements RepositoryProject {
     private final RowMapperWord mapperWord;
 
     @Autowired
-    public ApplicationRepository(JdbcTemplate jdbcTemplate,
+    public RepositoryProjectImpl(JdbcTemplate jdbcTemplate,
                                  RowMapperModelSite mapperModelSite,
                                  RowMapperParentSite mapperParentSite,
                                  RowMapperWord mapperWord) {
@@ -188,7 +188,6 @@ public class ApplicationRepository implements RepositoryProject {
 
     private void saveRegisteredSites(List<ModelSite> foundSites) {
         List<ModelSite> forSave = foundSites.stream()
-                .filter(this::checkSavedFoundSite)
                 .filter(modelSite -> checkSavedAllSite(modelSite.url())).toList();
         if (!forSave.isEmpty()) {
             String sql = "INSERT INTO all_urls (url, parent_url, name) VALUES(?, ?, ?);";
@@ -247,7 +246,7 @@ public class ApplicationRepository implements RepositoryProject {
             site.setError(FixedValue.FAILED_ERROR);
         } else if (checkIndexedSite(url) && checkBadSite(url) && !checkSavedAllSite(url)) {
             site.setStatus(FixedValue.INDEXING_COMPLETE);
-        } else if (ManagementBuildingData.START.get()) {
+        } else if (ServiceBuildingDataImpl.START.get()) {
             site.setStatus(FixedValue.IN_PROGRESS);
         } else if (checkIndexedSite(url) && checkSavedAllSite(url)) {
             site.setStatus(FixedValue.INDEXING_NOT_STARTED);
