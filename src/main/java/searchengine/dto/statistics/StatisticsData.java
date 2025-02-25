@@ -10,6 +10,4 @@ import java.util.List;
 public final class StatisticsData {
     private TotalStatistics total;
     private List<DetailedStatisticsItem> detailed;
-
-    private StatisticsData(){}
 }

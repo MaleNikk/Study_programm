@@ -2,9 +2,8 @@ package searchengine.configuration;
 
 import searchengine.dto.entity.ModelParentSite;
 import searchengine.dto.entity.ModelWord;
-import searchengine.dto.model.ModelSearch;
-import searchengine.dto.model.TotalSearchResult;
-import searchengine.searching.processing.constant.FixedValue;
+import searchengine.dto.model.ModelFinder;
+import searchengine.config.FixedValue;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -16,11 +15,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public final class TestCreatorModel {
 
-    public static final TotalSearchResult TEST_ANSWER = initAnswer();
+    public static final ModelFinder TEST_MODEL_SEARCH = initModel();
 
-    public static final ModelSearch TEST_MODEL_SEARCH = initModel();
-
-    public static final ExecutorService TEST_EXECUTOR = Executors.newFixedThreadPool(FixedValue.COUNT_THREADS);
+    public static final ExecutorService TEST_EXECUTOR = Executors.newFixedThreadPool(5);
 
     public static final ConcurrentLinkedQueue<List<ModelWord>> LINKED_QUEUE = initCollectionModelWords();
 
@@ -28,32 +25,23 @@ public final class TestCreatorModel {
 
     public static final List<ModelParentSite> PARENT_SITE_LIST_UPDATE = initCollectionParentSites(FixedValue.TIME_SLEEP);
 
-    private static TotalSearchResult initAnswer(){
-        TotalSearchResult searchResult = new TotalSearchResult();
-        searchResult.setResult(FixedValue.TRUE);
-        searchResult.setError(FixedValue.ERROR);
-        searchResult.setCount(FixedValue.COUNT_THREADS);
-        searchResult.setData(List.of());
-        return searchResult;
-    }
-
-    private static ModelSearch initModel(){
-        return new ModelSearch("test_1","http://localhost:8080/test_1", FixedValue.ZERO,FixedValue.ZERO);
+    private static ModelFinder initModel(){
+        return new ModelFinder("test_1","http://localhost:8080/test_1", FixedValue.ZERO,FixedValue.ZERO);
     }
 
     private static ConcurrentLinkedQueue<List<ModelWord>> initCollectionModelWords() {
         ConcurrentLinkedQueue<List<ModelWord>> linkedQueue = new ConcurrentLinkedQueue<>();
-        String[] objectData = {"test", "testing", "http://localhost:8080/test", "name", "http://localhost"};
+        String[] objectData = {"test","testing","http://localhost:8080/test","http://localhost","name"};
         AtomicInteger countTest = new AtomicInteger(FixedValue.ZERO);
         do {
             List<ModelWord> modelWords = new ArrayList<>();
             do {
                 modelWords.add(new ModelWord(
                         initNextData(countTest, objectData[0]),
-                        initNextData(countTest, objectData[1]),
                         initNextData(countTest, objectData[2]),
                         initNextData(countTest, objectData[3]),
-                        initNextData(countTest, objectData[4])
+                        initNextData(countTest, objectData[4]),
+                        countTest.get()
                 ));
             } while (modelWords.size() < 4);
             linkedQueue.add(modelWords);
@@ -63,7 +51,7 @@ public final class TestCreatorModel {
 
     private static List<ModelParentSite> initCollectionParentSites(int digitTest) {
         AtomicInteger countTest = new AtomicInteger(FixedValue.ZERO);
-        String[] objectData = {"test_url", "test_name", String.valueOf(Instant.now()), "TEST", FixedValue.ERROR};
+        String[] objectData = {"test_url", "test_name", String.valueOf(Instant.now()), "TEST", FixedValue.NO_ERROR};
         List<ModelParentSite> parentSites = new ArrayList<>();
         do {
             parentSites.add(new ModelParentSite(

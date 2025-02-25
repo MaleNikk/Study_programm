@@ -1,11 +1,13 @@
 package searchengine.dto.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Data
+@AllArgsConstructor
 @NoArgsConstructor
 public class TotalSearchResult {
 
@@ -15,7 +17,7 @@ public class TotalSearchResult {
 
     private String error;
 
-    private List<SearchResultAnswer> data;
+    private List<ResultAnswer> data;
 
     public TotalSearchResult(Boolean result, String error) {
         this.result = result;

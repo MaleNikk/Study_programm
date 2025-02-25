@@ -8,6 +8,4 @@ import lombok.Data;
 public final class StatisticsResponse {
     private boolean result;
     private StatisticsData statistics;
-
-    private StatisticsResponse(){}
 }

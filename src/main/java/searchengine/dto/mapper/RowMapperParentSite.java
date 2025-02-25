@@ -1,11 +1,13 @@
 package searchengine.dto.mapper;
 
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Component;
 import searchengine.dto.entity.ModelParentSite;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+@Component
 public class RowMapperParentSite implements RowMapper<ModelParentSite> {
     @Override
     public ModelParentSite mapRow(ResultSet rs, int rowNum) throws SQLException {

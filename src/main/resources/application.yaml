@@ -8,6 +8,13 @@ indexing-settings:
       name: Skillbox
     - url: https://www.playback.ru
       name: PlayBack.Ru
+    - url: https://et-cetera.ru/mobile/
+      name: Et-cetera.ru
+    - url: https://site.for.check.error
+      name: Error.site
+  morphology:
+    status: "false" #'true' or 'false' - enable or disable morphology
+    active-threads: 7
 
 spring:
   datasource:
@@ -16,3 +23,4 @@ spring:
     password: word
     hikari:
       schema: storage
+      maximum-pool-size: 10

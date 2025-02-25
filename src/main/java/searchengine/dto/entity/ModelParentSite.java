@@ -1,4 +1,19 @@
 package searchengine.dto.entity;
 
-public record ModelParentSite(String url, String name, String createdTime, String status,
-                              long statusTime, String error, int pages, int lemmas) {}
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+@AllArgsConstructor
+public class ModelParentSite {
+    private String url;
+    private String name;
+    private String createdTime;
+    private String status;
+    private long statusTime;
+    private String error;
+    private int pages;
+    private int lemmas;
+}

@@ -6,13 +6,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import searchengine.dto.entity.ModelSite;
 import searchengine.dto.entity.ModelWord;
-import searchengine.dto.model.ModelStart;
-import searchengine.dto.model.TotalSearchResult;
-import searchengine.dto.model.ModelSearch;
-import searchengine.dto.model.ModelStop;
+import searchengine.dto.model.*;
 import searchengine.dto.statistics.StatisticsResponse;
-import searchengine.searching.processing.constant.FixedValue;
-import searchengine.searching.service.AppServiceImpl;
+import searchengine.config.FixedValue;
+import searchengine.service.ServiceApplication;
 
 import java.util.List;
 
@@ -21,10 +18,10 @@ import java.util.List;
 @RequestMapping("/api")
 public final class ApiController {
 
-    private final AppServiceImpl service;
+    private final ServiceApplication service;
 
     @Autowired
-    public ApiController(AppServiceImpl service) {
+    public ApiController(ServiceApplication service) {
         this.service = service;
     }
 
@@ -47,30 +44,24 @@ public final class ApiController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<TotalSearchResult> search(
-            @RequestParam String query, String site, Integer offset, Integer limit
+    public ResponseEntity<TotalSearchResult> search(@RequestParam String query,String site,Integer offset,Integer limit
     ) {
         log.info("Init search word; {} at system time: {}. Options: parent site - {}, offset - {}, limit - {}",
                 query, System.nanoTime(), site, offset, limit);
-        if (!query.isBlank()) {
-            if (site == null) { site = FixedValue.SEARCH_IN_ALL; }
-            ModelSearch modelSearch = new ModelSearch(query, site, offset, limit);
-            return ResponseEntity.ok(service.findByWord(modelSearch));
-        } else {
+        if (query.isBlank()) {
             return ResponseEntity.badRequest().body(FixedValue.getBadResponse());
         }
+        return ResponseEntity.ok(service.findByWord(new ModelFinder(query, site, offset, limit)));
     }
 
     @PostMapping("/indexPage")
-    public ResponseEntity<TotalSearchResult> addPageForIndexing(@RequestParam String url) {
-        log.info("Init add site for indexing at system time: {}", System.currentTimeMillis());
-        if (!url.isBlank()) {
-            service.addSite(url, "");
+    public ResponseEntity<ModelQueryAnswer> addPageForIndexing(@RequestParam String url) {
+        log.info("Init add site \"{}\" for indexing at system time: {}",url, System.currentTimeMillis());
+        if (service.addSite(url, "")) {
             log.info("Site added, url: {}", url);
             return ResponseEntity.ok(FixedValue.getOkResponse());
-        } else {
-            return ResponseEntity.badRequest().body(FixedValue.getBadResponseAddSite());
         }
+        return ResponseEntity.badRequest().body(FixedValue.getBadResponseAddSite());
     }
 
     @GetMapping("/words")

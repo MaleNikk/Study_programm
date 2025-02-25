@@ -3,39 +3,39 @@ CREATE SCHEMA IF NOT EXISTS storage;
 CREATE TABLE IF NOT EXISTS bad_urls
 (
     id SERIAL PRIMARY KEY,
-    parent_url VARCHAR(350) NOT NULL,
-    name VARCHAR(255) NOT NULL,
-    url VARCHAR(350) NOT NULL
+    url VARCHAR(2084) NOT NULL,
+    parent_url VARCHAR(2084) NOT NULL,
+    name VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS sys_urls
 (
     id SERIAL PRIMARY KEY,
-    parent_url VARCHAR(350) NOT NULL,
-    name VARCHAR(255) NOT NULL,
-    url VARCHAR(350) NOT NULL
+    url VARCHAR(2084) NOT NULL,
+    parent_url VARCHAR(2084) NOT NULL,
+    name VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS all_urls
 (
     id SERIAL PRIMARY KEY,
-    parent_url VARCHAR(350) NOT NULL,
-    name VARCHAR(255) NOT NULL,
-    url VARCHAR(350) NOT NULL
+    url VARCHAR(2084) NOT NULL,
+    parent_url VARCHAR(2084) NOT NULL,
+    name VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS find_urls
 (
     id SERIAL PRIMARY KEY,
-    parent_url VARCHAR(350) NOT NULL,
-    name VARCHAR(255) NOT NULL,
-    url VARCHAR(350) NOT NULL
+    url VARCHAR(2084) NOT NULL,
+    parent_url VARCHAR(2084) NOT NULL,
+    name VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS parent_sites
 (
     id SERIAL PRIMARY KEY,
-    url VARCHAR(350) NOT NULL,
+    url VARCHAR(2084) NOT NULL,
     name VARCHAR(350) NOT NULL,
     created_time VARCHAR(255) NOT NULL,
     status VARCHAR(255) NOT NULL,
@@ -49,10 +49,10 @@ CREATE TABLE IF NOT EXISTS words
 (
     id SERIAL PRIMARY KEY ,
     lemma VARCHAR(50) NOT NULL,
-    word VARCHAR(50) NOT NULL,
-    url VARCHAR(350) NOT NULL,
-    name VARCHAR(350) NOT NULL,
-    parent_url VARCHAR(350) NOT NULL
+    url VARCHAR(2084) NOT NULL,
+    parent_url VARCHAR(2084) NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    frequency INTEGER NOT NULL
 );
 
 CREATE INDEX index_for_lemma ON words (lemma);

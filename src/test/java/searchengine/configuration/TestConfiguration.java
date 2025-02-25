@@ -3,29 +3,29 @@ package searchengine.configuration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import searchengine.searching.processing.indexing.IndexingManager;
-import searchengine.searching.processing.managing.AppManagementImpl;
-import searchengine.searching.processing.searching.SearchingManager;
-import searchengine.searching.repository.AppManagementRepositoryImpl;
-import searchengine.searching.service.AppServiceImpl;
+import searchengine.service.ServiceBuildingData;
+import searchengine.service.ServiceAdditions;
+import searchengine.service.ServiceFindingData;
+import searchengine.repository.RepositoryProject;
+import searchengine.service.ServiceApplication;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public abstract class TestConfiguration {
 
     @MockitoBean
-    public AppServiceImpl service;
+    public ServiceApplication service;
 
     @MockitoBean
-    public AppManagementImpl management;
+    public ServiceAdditions management;
 
     @MockitoBean
-    public AppManagementRepositoryImpl repository;
+    public RepositoryProject repository;
 
     @MockitoBean
-    public SearchingManager searchingManager;
+    public ServiceFindingData serviceFindingData;
 
     @MockitoBean
-    public IndexingManager indexingManager;
+    public ServiceBuildingData serviceBuildingData;
 
     @LocalServerPort
     public Integer serverPort;
