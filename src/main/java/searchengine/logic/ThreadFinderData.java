@@ -95,8 +95,8 @@ public class ThreadFinderData extends Thread {
                 break;
             }
         }
-        for (String lemma1 : lemmas) {
-            String regexWord = "(?iu)".concat(lemma1).concat("([a-zA-Zа-яА-ЯёЁ]*)?");
+        for (String found : lemmas) {
+            String regexWord = "(?iu)".concat(found).concat("([a-zA-Zа-яА-ЯёЁ]*)?");
             Matcher matcher = Pattern.compile(regexWord).matcher(snippet);
             if (matcher.find()) {
                 String word = matcher.group();

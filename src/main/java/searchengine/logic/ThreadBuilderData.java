@@ -74,7 +74,7 @@ public class ThreadBuilderData extends Thread {
     }
 
     private int saveFoundSites(HashSet<String> links, ModelSite modelSite) {
-        repository.saveFoundSites(links.stream()
+        repository.saveFoundSites(links.stream().filter(link ->!checkUrl(link))
                 .map(link -> new ModelSite(link, modelSite.parentUrl(), modelSite.name())).toList());
         return links.size();
     }
